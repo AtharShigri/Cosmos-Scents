@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+/*
+  Cosmos Scents design tokens.
+
+  The brand mark is black + gold, but the site must read as bright and
+  restrained, not the dark/gold "AI template" look the client rejected.
+  So the ratio is deliberately inverted from the old site: paper (near-white)
+  carries ~75% of the visual weight, ink (near-black) handles text and
+  structure, and gold is reserved for small, deliberate accents only --
+  a hover state, an icon, a thin rule. Never a large filled area, never a
+  glow or gradient.
+*/
+:root {
+  --color-paper: #faf8f4; /* warm off-white, not clinical pure white */
+  --color-paper-raised: #ffffff; /* cards/surfaces that sit above paper */
+  --color-ink: #161412; /* near-black, softer than pure #000 */
+  --color-muted: #7a7468; /* secondary text, warm gray (not cool gray) */
+  --color-line: #e7e2d8; /* borders/dividers, warm and quiet */
+  --color-gold: #b08d33; /* the one accent color -- use sparingly */
+  --color-gold-soft: #f3ead2; /* gold at ~10% for subtle fills/badges */
+}
+
+@theme inline {
+  --color-paper: var(--color-paper);
+  --color-paper-raised: var(--color-paper-raised);
+  --color-ink: var(--color-ink);
+  --color-muted: var(--color-muted);
+  --color-line: var(--color-line);
+  --color-gold: var(--color-gold);
+  --color-gold-soft: var(--color-gold-soft);
+
+  --font-heading: var(--font-fraunces);
+  --font-sans: var(--font-inter);
+
+  /* Restrained radius scale -- avoid the large, uniform "bubble" rounding
+     that reads as an AI-generated template. */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.625rem;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-heading {
+  font-family: var(--font-heading), ui-serif, Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* No AI-slop accent lines under headings, no decorative stripes.
+   Hierarchy comes from type scale, whitespace, and the one gold accent
+   used point-by-point -- never as a bar, border-top, or stripe. */
