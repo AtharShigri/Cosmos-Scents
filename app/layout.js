@@ -1,5 +1,7 @@
 import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
+import { CartProvider } from "@/context/CartContext";
+import Header from "@/components/Header";
 
 // Fraunces: a soft, characterful serif for headings. Deliberately not
 // Playfair Display -- Playfair is the single most common "elegant brand"
@@ -32,7 +34,10 @@ export default function RootLayout({ children }) {
       className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-paper text-ink">
-        {children}
+        <CartProvider>
+          <Header />
+          {children}
+        </CartProvider>
       </body>
     </html>
   );

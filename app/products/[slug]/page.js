@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/lib/products";
 import BottlePlaceholder from "@/components/BottlePlaceholder";
-import Button from "@/components/Button";
+import AddToCartButton from "@/components/AddToCartButton";
 
 export const dynamic = "force-dynamic";
 
@@ -59,15 +59,7 @@ export default async function ProductPage({ params }) {
 
         <p className="text-sm text-muted">{product.size}</p>
 
-        <Button
-          variant="primary"
-          disabled={product.stock === 0}
-          className="w-fit mt-2"
-        >
-          {product.stock === 0 ? "Sold Out" : "Add to Cart"}
-        </Button>
-        {/* Cart isn't wired up yet -- this button is a placeholder target
-            for Day 3's cart work. */}
+        <AddToCartButton product={product} />
       </div>
     </div>
   );
