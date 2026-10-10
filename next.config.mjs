@@ -14,6 +14,13 @@ const nextConfig = {
       },
     },
   },
+  // Once real product photos exist, add their host(s) here (e.g. an S3
+  // bucket or Cloudinary domain) so next/image is allowed to optimize
+  // them -- until then every product falls back to the placeholder art,
+  // so this list stays empty.
+  images: {
+    remotePatterns: [],
+  },
 };
 
 export default nextConfig;

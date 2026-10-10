@@ -1,0 +1,40 @@
+import Link from "next/link";
+import Image from "next/image";
+import BottlePlaceholder from "@/components/BottlePlaceholder";
+
+/**
+ * Catalog/homepage product tile. Falls back to the line-art placeholder
+ * until a product has real photography in `images`.
+ */
+export default function ProductCard({ product }) {
+  const image = product.images?.[0];
+
+  return (
+    <Link
+      href={`/products/${product.slug}`}
+      className="group flex flex-col gap-3"
+    >
+      {image ? (
+        <div className="relative aspect-[3/4] rounded-md border border-line overflow-hidden bg-paper-raised">
+          <Image
+            src={image}
+            alt={product.name}
+            fill
+            className="object-cover"
+          />
+        </div>
+      ) : (
+        <BottlePlaceholder className="aspect-[3/4]" label={product.name} />
+      )}
+      <div className="flex flex-col gap-0.5">
+        <p className="font-medium group-hover:text-gold transition-colors">
+          {product.name}
+        </p>
+        {product.tagline ? (
+          <p className="text-sm text-muted">{product.tagline}</p>
+        ) : null}
+        <p className="text-sm text-muted">Rs {product.price.toLocaleString()}</p>
+      </div>
+    </Link>
+  );
+}

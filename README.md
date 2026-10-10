@@ -25,16 +25,26 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
 
    `.env.local` is already git-ignored -- it will never be committed.
 
-3. Run the dev server:
+3. (Optional, recommended) populate placeholder products so the catalog
+   isn't empty:
+
+   ```bash
+   npm run seed
+   ```
+
+   Safe to re-run any time -- it upserts by slug instead of duplicating.
+   Swap the data in `scripts/seed.js` for Jamil's real products once he
+   sends names, prices, and photos.
+
+4. Run the dev server:
 
    ```bash
    npm run dev
    ```
 
-   Open http://localhost:3000. The homepage is a Day 1 placeholder;
-   http://localhost:3000/style-guide is the internal design reference --
-   every color, type size, button, and card the site uses traces back to
-   that page.
+   Open http://localhost:3000 for the homepage, /products for the catalog,
+   and /style-guide for the internal design reference -- every color, type
+   size, button, and card the site uses traces back to that page.
 
 ## Notes for whoever picks this up
 
@@ -59,6 +69,16 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
   `fonts.googleapis.com` (e.g. behind a restrictive proxy/sandbox), that's a
   network issue in that environment, not a code bug -- the app otherwise
   builds and lints clean.
+- **Data layer**: `lib/db.js` is a cached Mongoose connection helper;
+  `models/` has `Product`, `Category`, `Order`, `User`. Pages that read the
+  database (`/`, `/products`, `/products/[slug]`) are marked
+  `export const dynamic = "force-dynamic"` so they're rendered per-request
+  instead of at build time -- this matters because Cache Components is off
+  (see above), and because a build machine may not have DB credentials or
+  network access to Atlas.
+- **Homepage brand-story copy is a placeholder** -- written to hold the
+  layout together, not Jamil's actual words. Replace it with his real story
+  once he provides one; don't ship the placeholder copy as final content.
 
 ## Scripts
 
@@ -66,3 +86,4 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
 - `npm run build` -- production build
 - `npm run start` -- run a production build
 - `npm run lint` -- ESLint
+- `npm run seed` -- populate placeholder categories/products in MongoDB
