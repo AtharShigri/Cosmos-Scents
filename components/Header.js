@@ -1,11 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Logo from "@/components/Logo";
 import { useCart } from "@/context/CartContext";
 
 export default function Header() {
   const { itemCount } = useCart();
+  const pathname = usePathname();
+
+  // The admin area has its own sidebar nav -- don't stack the public
+  // shop header above it.
+  if (pathname?.startsWith("/admin")) return null;
 
   return (
     <header className="border-b border-line">

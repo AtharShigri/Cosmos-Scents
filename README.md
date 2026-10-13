@@ -33,13 +33,23 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
 
    Safe to re-run any time -- it upserts by slug instead of duplicating,
    and it also removes the old Day 2 dev placeholders (Desert Oud etc.)
-   if they're still in your database. Prices are still a Rs 3,500
-   placeholder across the board, and the Essence de Skardu / Essence de
-   Hunza grouping in `scripts/seed.js` is a theme-based guess pending
-   Jamil's confirmation -- both are called out in a comment at the top of
-   that file so they're easy to find and fix.
+   if they're still in your database. Prices are still a flat Rs 7,000
+   placeholder across the board (Jamil confirmed the real range is
+   Rs 5,000-7,000, but not per-product prices yet) -- called out in a
+   comment at the top of `scripts/seed.js` so it's easy to find and fix.
+   The Essence de Skardu / Essence de Hunza grouping there is confirmed
+   as-is for now.
 
-4. Run the dev server:
+4. Create an admin account so you can log into `/admin`:
+
+   ```bash
+   node scripts/create-admin.js you@example.com "some-password"
+   ```
+
+   Safe to re-run with the same email to reset that admin's password.
+   There's no public signup page on purpose.
+
+5. Run the dev server:
 
    ```bash
    npm run dev
@@ -95,6 +105,18 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
   collection; `/products` tabs are generated from whatever's in the
   `Category` collection, so a new collection just needs a new `Category`
   document -- no code change.
+- **Admin dashboard**: `/admin` -- manage products (add/edit/hide),
+  collections, and orders (view + update status), plus a stats overview
+  (revenue, pending orders, low stock). No public signup; create accounts
+  with `scripts/create-admin.js` (see Getting started above). Auth is a
+  signed JWT in an httpOnly cookie, checked both in `proxy.js` (Next 16's
+  renamed `middleware.js` -- same mechanism) and again inside every
+  mutating Server Function via `lib/requireAdmin.js`, per Next's own
+  guidance that a Server Function can end up reachable even if a proxy
+  matcher stops covering its route. There's no image uploader yet --
+  adding a product's photo means pasting a path under `/products/` (if
+  you've added the file there yourself) or a hosted image URL into the
+  "Image URLs" field.
 
 ## Scripts
 
