@@ -9,7 +9,11 @@
  * Safe to re-run with the same email to reset that admin's password.
  */
 
-import "dotenv/config";
+// dotenv/config on its own only loads a file named ".env" -- this project
+// follows Next.js's convention of ".env.local", so it has to be pointed
+// at that file explicitly or it silently finds nothing.
+import { config } from "dotenv";
+config({ path: ".env.local" });
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 

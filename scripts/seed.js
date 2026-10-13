@@ -22,7 +22,11 @@
  *    than guessed where there was no visual evidence either way.
  */
 
-import "dotenv/config";
+// dotenv/config on its own only loads a file named ".env" -- this project
+// follows Next.js's convention of ".env.local", so it has to be pointed
+// at that file explicitly or it silently finds nothing.
+import { config } from "dotenv";
+config({ path: ".env.local" });
 import mongoose from "mongoose";
 
 const MONGODB_URI = process.env.MONGODB_URI;
