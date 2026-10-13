@@ -7,11 +7,13 @@
  * Safe to re-run -- it upserts by slug instead of duplicating rows.
  *
  * STILL PLACEHOLDER, pending Jamil:
- *  - price: every product is set to Rs 3,500 as a placeholder. Update
- *    once real prices are confirmed.
- *  - category: Essence de Skardu / Essence de Hunza grouping below is
- *    a guess by theme (mountains+orchard vs. Hunza+floral) -- waiting on
- *    Jamil's actual split. Easy to fix: change `categorySlug` per product.
+ *  - price: every product is set to Rs 7,000 as a placeholder (he confirmed
+ *    the real range is Rs 5,000-7,000 but hasn't given per-product prices
+ *    yet). Update once those are confirmed.
+ *  - category: Essence de Skardu / Essence de Hunza grouping below is the
+ *    theme-based guess Jamil confirmed to go with for now (2026-10-13) --
+ *    may still get corrected once he checks. Easy to fix: change
+ *    `categorySlug` per product.
  *  - description/tagline: written from the product photography and
  *    Jamil's brand blurb, not his own copy. Swap in his real wording
  *    once he sends it, the same as the homepage brand-story section.
@@ -75,7 +77,9 @@ const categories = [
   },
 ];
 
-const PLACEHOLDER_PRICE = 3500;
+// Jamil confirmed real prices range Rs 5,000-7,000; using the top of that
+// range as a flat placeholder until he gives per-product prices.
+const PLACEHOLDER_PRICE = 7000;
 
 const products = [
   {
