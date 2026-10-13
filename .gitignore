@@ -37,6 +37,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# raw source assets dropped in for reference -- the actual files the site
+# uses are copied into public/ (products/, brand/) and tracked normally
+/Images
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

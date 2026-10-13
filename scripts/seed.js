@@ -1,11 +1,23 @@
 /**
- * One-time (or re-run-anytime) script to populate placeholder catalog data,
- * so the storefront has real products to render before Jamil sends the
- * actual lineup, prices, and photos.
+ * One-time (or re-run-anytime) script to populate the real Cosmos Scents
+ * catalog -- 6 products, confirmed live by Jamil on 2026-10-13.
  *
  * Usage:  npm run seed
  *
  * Safe to re-run -- it upserts by slug instead of duplicating rows.
+ *
+ * STILL PLACEHOLDER, pending Jamil:
+ *  - price: every product is set to Rs 3,500 as a placeholder. Update
+ *    once real prices are confirmed.
+ *  - category: Essence de Skardu / Essence de Hunza grouping below is
+ *    a guess by theme (mountains+orchard vs. Hunza+floral) -- waiting on
+ *    Jamil's actual split. Easy to fix: change `categorySlug` per product.
+ *  - description/tagline: written from the product photography and
+ *    Jamil's brand blurb, not his own copy. Swap in his real wording
+ *    once he sends it, the same as the homepage brand-story section.
+ *  - scentNotes: only filled in where the product photos show explicit
+ *    ingredient props (e.g. Hunza Elite's spices). Left empty rather
+ *    than guessed where there was no visual evidence either way.
  */
 
 import "dotenv/config";
@@ -51,58 +63,118 @@ const Category = mongoose.models.Category || mongoose.model("Category", Category
 const Product = mongoose.models.Product || mongoose.model("Product", ProductSchema);
 
 const categories = [
-  { name: "Oud", slug: "oud", description: "Rich, resinous, and long-lasting." },
-  { name: "Floral", slug: "floral", description: "Light, romantic, everyday wear." },
-  { name: "Musk", slug: "musk", description: "Warm and skin-close." },
+  {
+    name: "Essence de Skardu",
+    slug: "essence-de-skardu",
+    description: "Inspired by Skardu's orchards and the peaks that surround it.",
+  },
+  {
+    name: "Essence de Hunza",
+    slug: "essence-de-hunza",
+    description: "Inspired by Hunza's valleys, blossoms, and warmth.",
+  },
 ];
 
-// Placeholder lineup -- matches the names already used on /style-guide.
-// Swap for Jamil's real products, prices, and photos whenever he sends them.
+const PLACEHOLDER_PRICE = 3500;
+
 const products = [
   {
-    name: "Desert Oud",
-    slug: "desert-oud",
-    tagline: "Deep oud warmed by amber and a trace of smoke.",
+    name: "Apricot",
+    slug: "apricot",
+    tagline: "Sun-ripened apricot and orchard blossom.",
     description:
-      "Our signature oud, built around genuine agarwood and warmed with amber " +
-      "and a whisper of smoke. Long-lasting and bold -- made for evenings.",
-    price: 2400,
-    categorySlug: "oud",
-    scentNotes: ["Oud", "Amber", "Smoke"],
-    stock: 25,
+      "Named for the apricot orchards that define Gilgit-Baltistan every " +
+      "spring -- a bright, fruity scent layered with soft white blossom.",
+    categorySlug: "essence-de-skardu",
+    scentNotes: ["Apricot", "Orchard blossom"],
+    images: ["/products/apricot.jpg"],
     featured: true,
   },
   {
-    name: "Skardu Rose",
-    slug: "skardu-rose",
-    tagline: "Fresh rose with a clean, green edge.",
+    name: "Chogori",
+    slug: "chogori",
+    tagline: "Named for K2 -- known locally as Chogori.",
     description:
-      "Named for the valleys it's inspired by -- a bright, true rose softened " +
-      "with light green notes. Wearable day or night.",
-    price: 2400,
-    categorySlug: "floral",
-    scentNotes: ["Rose", "Green notes", "White musk"],
-    stock: 30,
+      "An Extrait de Parfum named after K2, the world's second-highest " +
+      "peak and known locally as Chogori -- bold and long-lasting, built " +
+      "for those who want a fragrance with real presence.",
+    categorySlug: "essence-de-skardu",
+    scentNotes: [],
+    images: ["/products/chogori.jpg"],
     featured: true,
   },
   {
-    name: "Glacier Musk",
-    slug: "glacier-musk",
-    tagline: "Clean, cool musk that sits close to the skin.",
+    name: "Siachen",
+    slug: "siachen",
+    tagline: "Cool, crisp air from the glacier's edge.",
     description:
-      "A quiet, skin-close musk with a cool, mineral freshness -- inspired by " +
-      "Gilgit-Baltistan's glacial air. Subtle enough for daily wear.",
-    price: 2200,
-    categorySlug: "musk",
-    scentNotes: ["Musk", "Mineral accord", "Light citrus"],
-    stock: 40,
+      "Named after the Siachen Glacier -- a clean, cold-air scent meant " +
+      "to capture the stillness of high altitude.",
+    categorySlug: "essence-de-skardu",
+    scentNotes: [],
+    images: ["/products/siachen.jpg"],
+    featured: false,
+  },
+  {
+    name: "Hunza Elite",
+    slug: "hunza-elite",
+    tagline: "Warm spice against mountain air.",
+    description:
+      "A warm, spiced fragrance built around cinnamon, star anise, " +
+      "cardamom, and pink pepper -- Hunza Valley's warmth set against " +
+      "cool mountain air.",
+    categorySlug: "essence-de-hunza",
+    scentNotes: ["Cinnamon", "Star anise", "Cardamom", "Pink pepper"],
+    images: ["/products/hunza-elite.jpg"],
+    featured: true,
+  },
+  {
+    name: "Chu Kalimal",
+    slug: "chu-kalimal",
+    tagline: "Soft orchid, light and romantic.",
+    description:
+      "A soft, romantic floral built around orchid -- light enough for " +
+      "every day, worth noticing without overpowering a room.",
+    categorySlug: "essence-de-hunza",
+    scentNotes: ["Orchid"],
+    images: ["/products/chu-kalimal.jpg"],
+    featured: false,
+  },
+  {
+    name: "Siaserofo",
+    slug: "siaserofo",
+    tagline: "A full wildflower bouquet in one bottle.",
+    description:
+      "A bright floral bouquet -- rose, ranunculus, and wildflowers " +
+      "blended into one warm, feminine scent.",
+    categorySlug: "essence-de-hunza",
+    scentNotes: ["Rose", "Ranunculus", "Wildflower"],
+    images: ["/products/siaserofo.jpg"],
     featured: true,
   },
 ];
+
+// One-time cleanup: remove the Day 2 dev placeholder catalog (Desert Oud /
+// Skardu Rose / Glacier Musk) now that real products exist. Scoped to
+// these exact slugs -- not a general "delete anything unlisted" step.
+const OLD_PLACEHOLDER_PRODUCT_SLUGS = ["desert-oud", "skardu-rose", "glacier-musk"];
+const OLD_PLACEHOLDER_CATEGORY_SLUGS = ["oud", "floral", "musk"];
 
 async function main() {
   await mongoose.connect(MONGODB_URI);
   console.log("Connected to MongoDB.");
+
+  const { deletedCount: deletedProducts } = await Product.deleteMany({
+    slug: { $in: OLD_PLACEHOLDER_PRODUCT_SLUGS },
+  });
+  const { deletedCount: deletedCategories } = await Category.deleteMany({
+    slug: { $in: OLD_PLACEHOLDER_CATEGORY_SLUGS },
+  });
+  if (deletedProducts || deletedCategories) {
+    console.log(
+      `Removed ${deletedProducts} old placeholder product(s) and ${deletedCategories} old placeholder categor(y/ies).`
+    );
+  }
 
   const categoryIdBySlug = {};
   for (const cat of categories) {
@@ -118,7 +190,14 @@ async function main() {
   for (const { categorySlug, ...p } of products) {
     const doc = await Product.findOneAndUpdate(
       { slug: p.slug },
-      { ...p, category: categoryIdBySlug[categorySlug], active: true, images: [] },
+      {
+        ...p,
+        price: PLACEHOLDER_PRICE,
+        stock: 20,
+        size: "50ml",
+        category: categoryIdBySlug[categorySlug],
+        active: true,
+      },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
     console.log(`Product ready: ${doc.name} (Rs ${doc.price})`);

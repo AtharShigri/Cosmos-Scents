@@ -1,4 +1,5 @@
-import { getAllProducts } from "@/lib/products";
+import Link from "next/link";
+import { getAllProducts, getCategories } from "@/lib/products";
 import ProductCard from "@/components/ProductCard";
 
 // Product data changes independently of deploys (stock, new items), and
@@ -10,12 +11,18 @@ export const metadata = {
   title: "Shop | Cosmos Scents",
 };
 
-export default async function ProductsPage() {
+export default async function ProductsPage({ searchParams }) {
+  const { category: activeCategory = "all" } = await searchParams;
+
   let products = [];
+  let categories = [];
   let error = null;
 
   try {
-    products = await getAllProducts();
+    [products, categories] = await Promise.all([
+      getAllProducts(activeCategory),
+      getCategories(),
+    ]);
   } catch (err) {
     error = err;
   }
@@ -30,6 +37,23 @@ export default async function ProductsPage() {
         </p>
       </header>
 
+      {categories.length > 0 ? (
+        <nav className="flex flex-wrap gap-2 text-sm">
+          <CategoryTab href="/products" active={activeCategory === "all"}>
+            All
+          </CategoryTab>
+          {categories.map((cat) => (
+            <CategoryTab
+              key={cat.slug}
+              href={`/products?category=${cat.slug}`}
+              active={activeCategory === cat.slug}
+            >
+              {cat.name}
+            </CategoryTab>
+          ))}
+        </nav>
+      ) : null}
+
       {error ? (
         <p className="text-sm text-muted border border-line rounded-md p-4">
           Couldn&apos;t load products right now -- check that MONGODB_URI is
@@ -38,8 +62,8 @@ export default async function ProductsPage() {
         </p>
       ) : products.length === 0 ? (
         <p className="text-sm text-muted border border-line rounded-md p-4">
-          No products yet. Run <code>npm run seed</code> to add placeholder
-          products, or add real ones from the admin dashboard once it&apos;s
+          No products here yet. Run <code>npm run seed</code> to add the
+          catalog, or add products from the admin dashboard once it&apos;s
           built.
         </p>
       ) : (
@@ -50,5 +74,20 @@ export default async function ProductsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+function CategoryTab({ href, active, children }) {
+  return (
+    <Link
+      href={href}
+      className={`px-3 py-1.5 rounded-sm border transition-colors ${
+        active
+          ? "border-ink bg-ink text-paper"
+          : "border-line text-muted hover:border-ink hover:text-ink"
+      }`}
+    >
+      {children}
+    </Link>
   );
 }
