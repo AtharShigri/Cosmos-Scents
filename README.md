@@ -129,7 +129,7 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
   few dozen products. Conversation history lives in the browser tab only
   (plain `useState`, resets on refresh) -- no `Conversation` model, by
   design, to keep this simple; easy to add later if Jamil wants to review
-  past chats. Model defaults to `gemini-2.5-flash` (`lib/gemini.js`),
+  past chats. Model defaults to `gemini-3.8-flash` (`lib/gemini.js`),
   overridable via `GEMINI_MODEL` in `.env.local`.
 
 ## Scripts

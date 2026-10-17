@@ -20,6 +20,7 @@ export default function ProductCard({ product }) {
             src={image}
             alt={product.name}
             fill
+            sizes="(min-width: 640px) 33vw, 50vw"
             className="object-cover"
           />
         </div>

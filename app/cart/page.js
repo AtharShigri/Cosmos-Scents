@@ -31,7 +31,7 @@ export default function CartPage() {
             <div className="w-16 shrink-0">
               {item.image ? (
                 <div className="relative aspect-[3/4] rounded-sm overflow-hidden border border-line">
-                  <Image src={item.image} alt={item.name} fill className="object-cover" />
+                  <Image src={item.image} alt={item.name} fill sizes="64px" className="object-cover" />
                 </div>
               ) : (
                 <BottlePlaceholder className="aspect-[3/4]" label={item.name} />
