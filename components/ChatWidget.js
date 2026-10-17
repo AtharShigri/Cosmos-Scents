@@ -9,6 +9,12 @@ const WELCOME_MESSAGE = {
   role: "assistant",
   content:
     "Hi! I can help you find the right Cosmos Scents fragrance -- ask me about notes, prices, or which one suits an occasion.",
+  // Marks this as a local-only greeting that was never an actual model
+  // turn -- it must never be sent to Gemini as history. Gemini requires
+  // conversation history to start with a "user" turn, so including this
+  // (mapped to "model") as the first entry makes every single request
+  // fail validation.
+  synthetic: true,
 };
 
 /**
@@ -42,15 +48,18 @@ export default function ChatWidget() {
     if (!text || isPending) return;
 
     setError("");
+    // The history sent to the API is everything BEFORE this new message,
+    // with the synthetic greeting dropped -- the new message itself goes
+    // separately as `userMessage` (lib/actions/chat.js appends it once).
+    const apiHistory = messages
+      .filter((m) => !m.synthetic)
+      .map(({ role, content }) => ({ role, content }));
     const nextMessages = [...messages, { role: "user", content: text }];
     setMessages(nextMessages);
     setInput("");
 
     startTransition(async () => {
-      const result = await sendChatMessage(
-        nextMessages.map(({ role, content }) => ({ role, content })),
-        text
-      );
+      const result = await sendChatMessage(apiHistory, text);
       if (result?.error) {
         setError(result.error);
       } else if (result?.reply) {
