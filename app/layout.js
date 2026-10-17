@@ -2,6 +2,7 @@ import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/Header";
+import ChatWidget from "@/components/ChatWidget";
 
 // Fraunces: a soft, characterful serif for headings. Deliberately not
 // Playfair Display -- Playfair is the single most common "elegant brand"
@@ -37,6 +38,7 @@ export default function RootLayout({ children }) {
         <CartProvider>
           <Header />
           {children}
+          <ChatWidget />
         </CartProvider>
       </body>
     </html>

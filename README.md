@@ -117,6 +117,20 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
   adding a product's photo means pasting a path under `/products/` (if
   you've added the file there yourself) or a hosted image URL into the
   "Image URLs" field.
+- **Chatbot ("Ask Cosmos")**: a floating widget (`components/ChatWidget.js`)
+  on every public page (hidden on `/admin`, same pattern as `Header.js`).
+  Answers product questions and makes recommendations, grounded in the
+  live catalog -- `lib/actions/chat.js` pulls every active product fresh
+  from MongoDB on each message and hands the whole thing to Gemini as
+  context, so it can't invent a product, price, or scent note that isn't
+  actually in the database. The catalog's small enough that this "stuff
+  the whole thing in the prompt" approach is simpler and more reliable
+  than a real vector-search setup -- revisit if the catalog grows past a
+  few dozen products. Conversation history lives in the browser tab only
+  (plain `useState`, resets on refresh) -- no `Conversation` model, by
+  design, to keep this simple; easy to add later if Jamil wants to review
+  past chats. Model defaults to `gemini-2.5-flash` (`lib/gemini.js`),
+  overridable via `GEMINI_MODEL` in `.env.local`.
 
 ## Scripts
 
