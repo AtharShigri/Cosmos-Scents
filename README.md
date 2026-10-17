@@ -22,6 +22,9 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
    - `GEMINI_API_KEY` -- from https://aistudio.google.com/apikey
    - `JWT_SECRET` -- any long random string, e.g.
      `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+   - `BLOB_READ_WRITE_TOKEN` -- from a Vercel Blob store (dashboard -> your
+     project -> Storage -> Create -> Blob). Only needed for the admin
+     "Upload photos" field; everything else works without it.
 
    `.env.local` is already git-ignored -- it will never be committed.
 
@@ -113,10 +116,16 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
   renamed `middleware.js` -- same mechanism) and again inside every
   mutating Server Function via `lib/requireAdmin.js`, per Next's own
   guidance that a Server Function can end up reachable even if a proxy
-  matcher stops covering its route. There's no image uploader yet --
-  adding a product's photo means pasting a path under `/products/` (if
-  you've added the file there yourself) or a hosted image URL into the
-  "Image URLs" field.
+  matcher stops covering its route. The product form's "Upload photos"
+  field uploads straight to Vercel Blob storage (`lib/blob.js`) and adds
+  the result to the product's image list -- needs `BLOB_READ_WRITE_TOKEN`
+  (see env setup above). You can also still paste a path under
+  `/products/` or any hosted image URL directly into the "Existing / extra
+  image URLs" field; both get combined. One known gap: deleting or
+  replacing an image doesn't delete the old file from Blob storage, so a
+  product that's had its photo swapped a few times will leave orphaned
+  files there -- harmless (low cost, nothing points at them) but worth
+  knowing; Jamil can clean them up from the Vercel dashboard if it matters.
 - **Chatbot ("Ask Cosmos")**: a floating widget (`components/ChatWidget.js`)
   on every public page (hidden on `/admin`, same pattern as `Header.js`).
   Answers product questions and makes recommendations, grounded in the

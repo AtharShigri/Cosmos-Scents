@@ -100,7 +100,21 @@ export default function ProductForm({ action, categories, product }) {
         />
       </Field>
 
-      <Field label="Image URLs (comma-separated)">
+      <Field label="Upload photos">
+        <input
+          type="file"
+          name="imageFiles"
+          accept="image/*"
+          multiple
+          className="w-full text-sm file:mr-3 file:rounded-sm file:border-0 file:bg-ink file:text-paper file:px-3 file:py-1.5 file:text-sm file:cursor-pointer cursor-pointer"
+        />
+        <span className="text-xs text-muted">
+          Uploads straight to cloud storage (Vercel Blob) when you save --
+          no need to add the file to the project yourself. Up to 8MB each.
+        </span>
+      </Field>
+
+      <Field label="Existing / extra image URLs (comma-separated, optional)">
         <input
           name="images"
           defaultValue={product?.images?.join(", ")}
@@ -108,9 +122,10 @@ export default function ProductForm({ action, categories, product }) {
           className="w-full border border-line rounded-md px-3 py-2 text-sm focus:outline-none focus:border-ink"
         />
         <span className="text-xs text-muted">
-          No image uploader yet -- paste a path under /products/ (if you&apos;ve
-          added the file there) or a hosted image URL. Leave blank to use
-          the placeholder bottle illustration.
+          Already-uploaded photos show up here after saving -- remove one by
+          deleting it from this list. You can also paste a hosted image URL
+          directly. Uploads above get added to whatever&apos;s here. Leave
+          both blank to use the placeholder bottle illustration.
         </span>
       </Field>
 
