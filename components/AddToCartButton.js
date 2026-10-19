@@ -4,9 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import { useCart } from "@/context/CartContext";
+import { useToast } from "@/context/ToastContext";
 
 export default function AddToCartButton({ product }) {
   const { addItem } = useCart();
+  const { showToast } = useToast();
   const router = useRouter();
   const [added, setAdded] = useState(false);
 
@@ -26,6 +28,7 @@ export default function AddToCartButton({ product }) {
         onClick={() => {
           addItem(product, 1);
           setAdded(true);
+          showToast(`Added "${product.name}" to cart`);
         }}
       >
         Add to Cart

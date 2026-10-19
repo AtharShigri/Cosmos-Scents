@@ -58,9 +58,7 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
    npm run dev
    ```
 
-   Open http://localhost:3000 for the homepage, /products for the catalog,
-   and /style-guide for the internal design reference -- every color, type
-   size, button, and card the site uses traces back to that page.
+   Open http://localhost:3000 for the homepage and /products for the catalog.
 
 ## Notes for whoever picks this up
 
@@ -69,8 +67,10 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
   filled background, gradient, or glow. This is intentional: the previous
   black+gold-dominant version read as "AI generated" to the client, and the
   working theory is that it was the *ratio*, not the colors themselves.
-  Keep new UI consistent with `/style-guide` rather than introducing new
-  patterns per-page.
+  Keep new UI consistent with the tokens in `app/globals.css` (and how
+  `components/Button.js` uses them) rather than introducing new patterns
+  per-page. (There used to be a `/style-guide` reference page for this --
+  removed once the client flagged it as an obvious dev/test page.)
 - **Fonts**: Fraunces (headings) + Inter (body), via `next/font/google`.
   Fraunces was chosen specifically over Playfair Display, which is the most
   common "elegant brand" default in AI site generators.

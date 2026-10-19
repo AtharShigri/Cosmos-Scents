@@ -59,3 +59,17 @@ h4,
 /* No AI-slop accent lines under headings, no decorative stripes.
    Hierarchy comes from type scale, whitespace, and the one gold accent
    used point-by-point -- never as a bar, border-top, or stripe. */
+
+/* Used by context/ToastContext.js. A plain fade + small rise -- no
+   scale/bounce, consistent with how this site treats motion everywhere
+   else (hover states are opacity/color transitions only). */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

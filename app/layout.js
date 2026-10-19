@@ -1,6 +1,7 @@
 import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
+import { ToastProvider } from "@/context/ToastContext";
 import Header from "@/components/Header";
 import ChatWidget from "@/components/ChatWidget";
 
@@ -35,11 +36,13 @@ export default function RootLayout({ children }) {
       className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-paper text-ink">
-        <CartProvider>
-          <Header />
-          {children}
-          <ChatWidget />
-        </CartProvider>
+        <ToastProvider>
+          <CartProvider>
+            <Header />
+            {children}
+            <ChatWidget />
+          </CartProvider>
+        </ToastProvider>
       </body>
     </html>
   );

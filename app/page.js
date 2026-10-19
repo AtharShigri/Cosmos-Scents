@@ -29,9 +29,6 @@ export default async function Home() {
           <Button as={Link} href="/products" variant="primary">
             Shop the collection
           </Button>
-          <Button as={Link} href="/style-guide" variant="ghost">
-            View style reference
-          </Button>
         </div>
       </section>
 

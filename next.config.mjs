@@ -14,12 +14,26 @@ const nextConfig = {
       },
     },
   },
-  // Once real product photos exist, add their host(s) here (e.g. an S3
-  // bucket or Cloudinary domain) so next/image is allowed to optimize
-  // them -- until then every product falls back to the placeholder art,
-  // so this list stays empty.
+  // Admin product photos now upload to Vercel Blob (lib/blob.js), which
+  // serves them from this wildcard host -- next/image refuses to
+  // optimize an image from a host that isn't listed here.
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
+      },
+    ],
+  },
+  experimental: {
+    serverActions: {
+      // Default is 1MB, which the raw multipart body of a single admin
+      // photo upload blows past immediately (this is what "Body exceeded
+      // 1 MB limit" on /admin/products/new was). blob.js already caps
+      // each file at 8MB; this just needs enough headroom for a few of
+      // those in one submit plus multipart overhead.
+      bodySizeLimit: "20mb",
+    },
   },
 };
 
