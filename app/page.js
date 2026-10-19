@@ -24,7 +24,7 @@ export default async function Home() {
       {carouselImages.length > 0 ? (
         <Carousel images={carouselImages}>
           <Logo size="lg" />
-          <h1 className="text-3xl sm:text-4xl max-w-xl text-paper">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl max-w-2xl text-paper leading-[1.05]">
             Gilgit-Baltistan&apos;s first local fragrance brand.
           </h1>
           <p className="max-w-md text-paper/80">

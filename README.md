@@ -152,16 +152,26 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
   -- `lib/carousel.js` reads that folder at request time and sorts by the
   trailing number, so no code change is needed. When there's at least one
   image, `components/Carousel.js` itself **is** the full-screen homepage
-  hero (not a boxed section below it) -- a "peek" slider that shows the
-  active photo centered and large with a sliver of the previous/next
-  photo visible at each edge, real transform motion (translate + scale,
-  not just a crossfade), autoplay every 5.5s, pauses on hover. Left/right
-  arrows only fade in while hovering the hero -- there's intentionally no
-  dot/indicator bar. The hero copy (logo/heading/CTA) sits on a dark
-  gradient scrim over the photo, using `Button`'s `onDark` variant so the
-  CTA stays legible on dark photography. If `public/carousel/` is empty,
-  the homepage falls back to a plain text-only hero (same copy, original
-  white/paper styling) so the page still works with zero photos.
+  hero (not a boxed section below it, and not literally 100vh -- it's
+  `92vh` capped at `820px` so the next section visibly peeks in at the
+  bottom of the first viewport, so it's clear the page keeps going).
+  It's a cinema-reel / coverflow slider: the active photo is a large
+  square card popped front-and-center, with the previous/next photo
+  visibly showing behind it to each side, scaled down and dimmed -- only
+  those three are ever in the DOM. Cards are square (`.hero-slide` in
+  `app/globals.css`) to match the real photos' actual ~1:1 ratio, and the
+  peek offset is a plain CSS custom property in `globals.css` (Tailwind's
+  arbitrary-property bracket syntax for a `--custom-prop` didn't reliably
+  generate -- that's what caused the first version to render one
+  full-bleed image with no visible peek at all). Real transform motion
+  (translate + scale, not just a crossfade), autoplay every 5.5s, pauses
+  on hover. Left/right arrows only fade in while hovering the hero --
+  there's intentionally no dot/indicator bar. The hero copy (logo/big
+  heading/CTA) sits on a dark gradient scrim over the photos, using
+  `Button`'s `onDark` variant so the CTA stays legible on dark
+  photography. If `public/carousel/` is empty, the homepage falls back
+  to a plain text-only hero (same copy, original white/paper styling) so
+  the page still works with zero photos.
 - **Footer**: real contact info (phone, address, Instagram/Facebook/
   LinkedIn), provided 2026-10-19 -- `components/Footer.js`.
 - **About / Contact / FAQ pages**: `/about` and `/contact` use Jamil's

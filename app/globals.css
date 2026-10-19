@@ -82,3 +82,25 @@ h4,
     transform: translateY(0);
   }
 }
+
+/* Hero carousel "peek" geometry (components/Carousel.js) -- written as
+   plain CSS rather than a Tailwind utility class so the custom property
+   is guaranteed to apply (Tailwind's arbitrary-property bracket syntax
+   for `--custom-props` did not reliably generate, which is why the first
+   attempt at this showed one full-bleed image with no visible peek at
+   all). --peek-offset is how far each neighbor card is pushed sideways,
+   as a plain CSS custom property that components/Carousel.js reads via
+   var() in an inline transform. The square-ish `width`/aspect-ratio here
+   is deliberate: the real carousel photos are ~1:1, so the card shape
+   matches them instead of stretching them into a tall rectangle. */
+.hero-slide {
+  --peek-offset: 46vw;
+  width: min(58vw, 60vh);
+  aspect-ratio: 1 / 1;
+}
+@media (max-width: 639px) {
+  .hero-slide {
+    --peek-offset: 52vw;
+    width: min(82vw, 46vh);
+  }
+}
