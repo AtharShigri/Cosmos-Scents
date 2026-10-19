@@ -2,7 +2,9 @@ import Link from "next/link";
 import Logo from "@/components/Logo";
 import Button from "@/components/Button";
 import ProductCard from "@/components/ProductCard";
+import Carousel from "@/components/Carousel";
 import { getFeaturedProducts, getCategories } from "@/lib/products";
+import { getCarouselImages } from "@/lib/carousel";
 
 export const dynamic = "force-dynamic";
 
@@ -11,11 +13,12 @@ export default async function Home() {
     getFeaturedProducts().catch(() => []),
     getCategories().catch(() => []),
   ]);
+  const carouselImages = getCarouselImages();
 
   return (
     <main className="flex flex-col">
       {/* Hero */}
-      <section className="flex flex-col items-center justify-center px-6 py-24 text-center gap-6 border-b border-line">
+      <section className="flex flex-col items-center justify-center px-6 py-16 sm:py-24 text-center gap-6 border-b border-line">
         <Logo size="lg" />
         <h1 className="text-3xl sm:text-4xl max-w-xl">
           Gilgit-Baltistan&apos;s first local fragrance brand.
@@ -31,6 +34,16 @@ export default async function Home() {
           </Button>
         </div>
       </section>
+
+      {/* Carousel -- drop images into public/carousel/ to add/change slides,
+          no code change needed (see lib/carousel.js) */}
+      {carouselImages.length > 0 ? (
+        <section className="px-4 sm:px-6 py-10 sm:py-12 border-b border-line">
+          <div className="mx-auto max-w-5xl">
+            <Carousel images={carouselImages} />
+          </div>
+        </section>
+      ) : null}
 
       {/* Featured products */}
       {featured.length > 0 ? (

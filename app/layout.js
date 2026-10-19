@@ -3,6 +3,7 @@ import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { ToastProvider } from "@/context/ToastContext";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import ChatWidget from "@/components/ChatWidget";
 
 // Fraunces: a soft, characterful serif for headings. Deliberately not
@@ -40,6 +41,7 @@ export default function RootLayout({ children }) {
           <CartProvider>
             <Header />
             {children}
+            <Footer />
             <ChatWidget />
           </CartProvider>
         </ToastProvider>

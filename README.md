@@ -140,8 +140,26 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
   design, to keep this simple; easy to add later if Jamil wants to review
   past chats. Model defaults to `gemini-3.8-flash` (`lib/gemini.js`),
   overridable via `GEMINI_MODEL` in `.env.local`.
-
-## Scripts
+- **Homepage carousel**: drop an image named `carousel-N.jpg` (or `.jpeg`/
+  `.png`/`.webp`) into `public/carousel/` to add or change a slide --
+  `lib/carousel.js` reads that folder at request time and sorts by the
+  trailing number, so no code change is needed. Empty/missing folder
+  just means no carousel section (handled gracefully). Crossfade only
+  (opacity transition, no slide/scale motion), autoplay every 4.5s,
+  pauses on hover, has prev/next + dot controls.
+- **Footer**: real contact info (phone, address, Instagram/Facebook/
+  LinkedIn), provided 2026-10-19 -- `components/Footer.js`.
+- **About / Contact / FAQ pages**: `/about` and `/contact` use Jamil's
+  real brand copy and contact details. `/faq` is a first-draft set of
+  Q&A based only on what's actually confirmed so far (payment methods,
+  local production) -- flagged here because it has NOT been reviewed by
+  Jamil; update `app/faq/page.js`'s `FAQS` array once he's seen it,
+  especially real shipping times and a real return policy.
+- **Image aspect ratio**: product cards and the product detail page use
+  `aspect-[2/3]` -- matches the real product photos' actual ratio. The
+  original `aspect-[3/4]` was visibly cropping every photo (this is what
+  "zoomed/halved" images looked like); don't change this back without
+  checking new photos' actual dimensions first.
 
 - `npm run dev` -- start the dev server
 - `npm run build` -- production build

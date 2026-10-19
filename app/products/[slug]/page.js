@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { getProductBySlug } from "@/lib/products";
 import BottlePlaceholder from "@/components/BottlePlaceholder";
 import AddToCartButton from "@/components/AddToCartButton";
@@ -22,14 +23,20 @@ export default async function ProductPage({ params }) {
   return (
     <div className="mx-auto max-w-4xl px-6 py-16 grid sm:grid-cols-2 gap-10">
       {image ? (
-        // eslint-disable-next-line @next/next/no-img-element -- swapped for next/image once real photos exist and remotePatterns is configured
-        <img
-          src={image}
-          alt={product.name}
-          className="rounded-md border border-line w-full aspect-[3/4] object-cover"
-        />
+        // 2:3 matches the real product photos' actual ratio -- see the
+        // same note in components/ProductCard.js.
+        <div className="relative w-full aspect-[2/3] rounded-md border border-line overflow-hidden bg-paper-raised">
+          <Image
+            src={image}
+            alt={product.name}
+            fill
+            sizes="(min-width: 640px) 50vw, 100vw"
+            priority
+            className="object-cover"
+          />
+        </div>
       ) : (
-        <BottlePlaceholder className="aspect-[3/4]" label={product.name} />
+        <BottlePlaceholder className="aspect-[2/3]" label={product.name} />
       )}
 
       <div className="flex flex-col gap-4">

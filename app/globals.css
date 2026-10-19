@@ -19,6 +19,12 @@
   --color-line: #e7e2d8; /* borders/dividers, warm and quiet */
   --color-gold: #b08d33; /* the one accent color -- use sparingly */
   --color-gold-soft: #f3ead2; /* gold at ~10% for subtle fills/badges */
+
+  /* Tailwind's default for every transition-colors/-opacity utility site-
+     wide is 150ms -- bumped slightly so hover/focus states ease in rather
+     than snap. Still opacity/color only (see the animation rule below),
+     just a touch gentler. */
+  --default-transition-duration: 250ms;
 }
 
 @theme inline {

@@ -27,56 +27,60 @@ export default function CartPage() {
 
       <div className="flex flex-col divide-y divide-line">
         {items.map((item) => (
-          <div key={item.productId} className="flex items-center gap-4 py-4">
+          <div key={item.productId} className="flex flex-wrap items-center gap-4 py-4">
             <div className="w-16 shrink-0">
               {item.image ? (
-                <div className="relative aspect-[3/4] rounded-sm overflow-hidden border border-line">
+                <div className="relative aspect-[2/3] rounded-sm overflow-hidden border border-line">
                   <Image src={item.image} alt={item.name} fill sizes="64px" className="object-cover" />
                 </div>
               ) : (
-                <BottlePlaceholder className="aspect-[3/4]" label={item.name} />
+                <BottlePlaceholder className="aspect-[2/3]" label={item.name} />
               )}
             </div>
 
-            <div className="flex-1">
+            <div className="flex-1 min-w-[140px]">
               <Link href={`/products/${item.slug}`} className="font-medium hover:text-gold">
                 {item.name}
               </Link>
               <p className="text-sm text-muted">Rs {item.price.toLocaleString()}</p>
             </div>
 
-            <div className="flex items-center gap-2">
+            {/* Wraps onto its own row on narrow screens (flex-wrap on the
+                parent) instead of squeezing/overflowing next to the name. */}
+            <div className="flex items-center gap-4 ml-auto">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  aria-label="Decrease quantity"
+                  onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                  className="w-7 h-7 border border-line rounded-sm hover:border-ink cursor-pointer"
+                >
+                  &minus;
+                </button>
+                <span className="w-6 text-center text-sm">{item.quantity}</span>
+                <button
+                  type="button"
+                  aria-label="Increase quantity"
+                  onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                  className="w-7 h-7 border border-line rounded-sm hover:border-ink cursor-pointer"
+                >
+                  +
+                </button>
+              </div>
+
+              <p className="w-20 text-right text-sm font-medium">
+                Rs {(item.price * item.quantity).toLocaleString()}
+              </p>
+
               <button
                 type="button"
-                aria-label="Decrease quantity"
-                onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                className="w-7 h-7 border border-line rounded-sm hover:border-ink cursor-pointer"
+                aria-label={`Remove ${item.name}`}
+                onClick={() => removeItem(item.productId)}
+                className="text-muted hover:text-ink text-sm cursor-pointer"
               >
-                &minus;
-              </button>
-              <span className="w-6 text-center text-sm">{item.quantity}</span>
-              <button
-                type="button"
-                aria-label="Increase quantity"
-                onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                className="w-7 h-7 border border-line rounded-sm hover:border-ink cursor-pointer"
-              >
-                +
+                &times;
               </button>
             </div>
-
-            <p className="w-20 text-right text-sm font-medium">
-              Rs {(item.price * item.quantity).toLocaleString()}
-            </p>
-
-            <button
-              type="button"
-              aria-label={`Remove ${item.name}`}
-              onClick={() => removeItem(item.productId)}
-              className="text-muted hover:text-ink text-sm cursor-pointer"
-            >
-              &times;
-            </button>
           </div>
         ))}
       </div>

@@ -15,7 +15,9 @@ export default function ProductCard({ product }) {
       className="group flex flex-col gap-3"
     >
       {image ? (
-        <div className="relative aspect-[3/4] rounded-md border border-line overflow-hidden bg-paper-raised">
+        // 2:3 matches the real product photos' actual ratio -- a 3:4 box
+        // (the old value) cropped a visible strip off every photo.
+        <div className="relative aspect-[2/3] rounded-md border border-line overflow-hidden bg-paper-raised">
           <Image
             src={image}
             alt={product.name}
@@ -25,7 +27,7 @@ export default function ProductCard({ product }) {
           />
         </div>
       ) : (
-        <BottlePlaceholder className="aspect-[3/4]" label={product.name} />
+        <BottlePlaceholder className="aspect-[2/3]" label={product.name} />
       )}
       <div className="flex flex-col gap-0.5">
         <p className="font-medium group-hover:text-gold transition-colors">
