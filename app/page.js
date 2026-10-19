@@ -17,33 +17,45 @@ export default async function Home() {
 
   return (
     <main className="flex flex-col">
-      {/* Hero */}
-      <section className="flex flex-col items-center justify-center px-6 py-16 sm:py-24 text-center gap-6 border-b border-line">
-        <Logo size="lg" />
-        <h1 className="text-3xl sm:text-4xl max-w-xl">
-          Gilgit-Baltistan&apos;s first local fragrance brand.
-        </h1>
-        <p className="max-w-md text-muted">
-          Born in the heart of Shigar Valley -- authentic, premium
-          fragrances inspired by the landscapes and traditions of
-          Baltistan and beyond.
-        </p>
-        <div className="flex gap-3">
-          <Button as={Link} href="/products" variant="primary">
-            Shop the collection
-          </Button>
-        </div>
-      </section>
-
-      {/* Carousel -- drop images into public/carousel/ to add/change slides,
-          no code change needed (see lib/carousel.js) */}
+      {/* Hero -- the carousel itself IS the hero/wallpaper when there are
+          slides to show (drop images into public/carousel/ to add/change
+          slides, no code change needed, see lib/carousel.js). Falls back
+          to a plain text hero if that folder is empty. */}
       {carouselImages.length > 0 ? (
-        <section className="px-4 sm:px-6 py-10 sm:py-12 border-b border-line">
-          <div className="mx-auto max-w-5xl">
-            <Carousel images={carouselImages} />
+        <Carousel images={carouselImages}>
+          <Logo size="lg" />
+          <h1 className="text-3xl sm:text-4xl max-w-xl text-paper">
+            Gilgit-Baltistan&apos;s first local fragrance brand.
+          </h1>
+          <p className="max-w-md text-paper/80">
+            Born in the heart of Shigar Valley -- authentic, premium
+            fragrances inspired by the landscapes and traditions of
+            Baltistan and beyond.
+          </p>
+          <div className="flex gap-3">
+            <Button as={Link} href="/products" variant="onDark">
+              Shop the collection
+            </Button>
+          </div>
+        </Carousel>
+      ) : (
+        <section className="flex flex-col items-center justify-center px-6 py-16 sm:py-24 text-center gap-6 border-b border-line">
+          <Logo size="lg" />
+          <h1 className="text-3xl sm:text-4xl max-w-xl">
+            Gilgit-Baltistan&apos;s first local fragrance brand.
+          </h1>
+          <p className="max-w-md text-muted">
+            Born in the heart of Shigar Valley -- authentic, premium
+            fragrances inspired by the landscapes and traditions of
+            Baltistan and beyond.
+          </p>
+          <div className="flex gap-3">
+            <Button as={Link} href="/products" variant="primary">
+              Shop the collection
+            </Button>
           </div>
         </section>
-      ) : null}
+      )}
 
       {/* Featured products */}
       {featured.length > 0 ? (

@@ -71,6 +71,13 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
   `components/Button.js` uses them) rather than introducing new patterns
   per-page. (There used to be a `/style-guide` reference page for this --
   removed once the client flagged it as an obvious dev/test page.)
+  **One deliberate exception**: the homepage hero carousel (see below) is a
+  full-bleed photography slider with an `--color-ink` backdrop and a dark
+  gradient scrim behind the hero copy, so it visually merges with the
+  carousel photos instead of sitting on a white band above them. This is
+  confined to that one section -- it's not a step back toward a black-
+  dominant site, just the one place a dark backdrop is the honest choice
+  because it's sitting behind a full-screen photo, not UI chrome.
 - **Fonts**: Fraunces (headings) + Inter (body), via `next/font/google`.
   Fraunces was chosen specifically over Playfair Display, which is the most
   common "elegant brand" default in AI site generators.
@@ -140,13 +147,21 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
   design, to keep this simple; easy to add later if Jamil wants to review
   past chats. Model defaults to `gemini-3.8-flash` (`lib/gemini.js`),
   overridable via `GEMINI_MODEL` in `.env.local`.
-- **Homepage carousel**: drop an image named `carousel-N.jpg` (or `.jpeg`/
-  `.png`/`.webp`) into `public/carousel/` to add or change a slide --
-  `lib/carousel.js` reads that folder at request time and sorts by the
-  trailing number, so no code change is needed. Empty/missing folder
-  just means no carousel section (handled gracefully). Crossfade only
-  (opacity transition, no slide/scale motion), autoplay every 4.5s,
-  pauses on hover, has prev/next + dot controls.
+- **Homepage carousel / hero**: drop an image named `carousel-N.jpg` (or
+  `.jpeg`/`.png`/`.webp`) into `public/carousel/` to add or change a slide
+  -- `lib/carousel.js` reads that folder at request time and sorts by the
+  trailing number, so no code change is needed. When there's at least one
+  image, `components/Carousel.js` itself **is** the full-screen homepage
+  hero (not a boxed section below it) -- a "peek" slider that shows the
+  active photo centered and large with a sliver of the previous/next
+  photo visible at each edge, real transform motion (translate + scale,
+  not just a crossfade), autoplay every 5.5s, pauses on hover. Left/right
+  arrows only fade in while hovering the hero -- there's intentionally no
+  dot/indicator bar. The hero copy (logo/heading/CTA) sits on a dark
+  gradient scrim over the photo, using `Button`'s `onDark` variant so the
+  CTA stays legible on dark photography. If `public/carousel/` is empty,
+  the homepage falls back to a plain text-only hero (same copy, original
+  white/paper styling) so the page still works with zero photos.
 - **Footer**: real contact info (phone, address, Instagram/Facebook/
   LinkedIn), provided 2026-10-19 -- `components/Footer.js`.
 - **About / Contact / FAQ pages**: `/about` and `/contact` use Jamil's

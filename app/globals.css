@@ -22,8 +22,11 @@
 
   /* Tailwind's default for every transition-colors/-opacity utility site-
      wide is 150ms -- bumped slightly so hover/focus states ease in rather
-     than snap. Still opacity/color only (see the animation rule below),
-     just a touch gentler. */
+     than snap. Still opacity/color only for ordinary UI (buttons, links,
+     cards) -- the one deliberate exception is the homepage hero carousel
+     (components/Carousel.js), which uses real transform motion (translate
+     + scale) because it's a full-screen photography slider, not a UI
+     control; restraint there read as stiff rather than premium. */
   --default-transition-duration: 250ms;
 }
 

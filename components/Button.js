@@ -13,6 +13,9 @@ const variants = {
   primary: "bg-ink text-paper hover:bg-ink/85",
   secondary: "border border-ink text-ink hover:bg-ink hover:text-paper",
   ghost: "text-ink hover:text-gold",
+  // For use on dark photography (the hero carousel's scrim) where
+  // `primary`/`secondary` would both read as dark-on-dark.
+  onDark: "bg-paper text-ink hover:bg-paper/90",
 };
 
 export default function Button({
