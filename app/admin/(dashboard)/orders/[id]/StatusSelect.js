@@ -3,7 +3,16 @@
 import { useTransition } from "react";
 import { updateOrderStatus } from "@/lib/actions/orders";
 
-const STATUSES = ["pending", "confirmed", "shipped", "delivered", "cancelled"];
+// Keep in sync with models/Order.js's enum and lib/actions/orders.js.
+const STATUSES = [
+  "pending",
+  "confirmed",
+  "processing",
+  "shipped",
+  "delivered",
+  "cancelled",
+  "returned",
+];
 
 export default function StatusSelect({ orderId, status }) {
   const [pending, startTransition] = useTransition();

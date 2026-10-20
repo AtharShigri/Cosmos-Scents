@@ -1,31 +1,27 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-
-const OPTIONS = [
-  { value: "newest", label: "Newest" },
-  { value: "price_asc", label: "Price: low to high" },
-  { value: "price_desc", label: "Price: high to low" },
-  { value: "rating_desc", label: "Highest rated" },
-];
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 /**
- * Updates the `sort` query param on /products without a page-reload-style
- * navigation (Next's router keeps it client-side), preserving whatever
- * `category` is already set so sort + collection filtering compose.
+ * Generic "update one query param via a <select>" control -- used for
+ * both the shop's price/rating sort (app/products/page.js) and a
+ * product's review sort (app/products/[slug]/page.js). Updates the URL
+ * client-side (no full navigation) and preserves every other query
+ * param already on the page (category, search, etc).
  */
-export default function SortSelect({ value }) {
+export default function SortSelect({ param, value, defaultValue, options }) {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   function handleChange(e) {
     const params = new URLSearchParams(searchParams);
-    if (e.target.value === "newest") {
-      params.delete("sort");
+    if (e.target.value === defaultValue) {
+      params.delete(param);
     } else {
-      params.set("sort", e.target.value);
+      params.set(param, e.target.value);
     }
-    router.push(`/products?${params.toString()}`);
+    router.push(`${pathname}?${params.toString()}`);
   }
 
   return (
@@ -36,7 +32,7 @@ export default function SortSelect({ value }) {
         onChange={handleChange}
         className="border border-line rounded-sm px-2 py-1.5 text-sm bg-paper focus:outline-none focus:border-ink cursor-pointer"
       >
-        {OPTIONS.map((opt) => (
+        {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}
           </option>

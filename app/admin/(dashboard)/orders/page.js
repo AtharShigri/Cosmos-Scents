@@ -6,20 +6,53 @@ export const dynamic = "force-dynamic";
 const STATUS_COLOR = {
   pending: "text-muted",
   confirmed: "text-gold",
+  processing: "text-gold",
   shipped: "text-gold",
   delivered: "text-ink",
   cancelled: "text-red-700",
+  returned: "text-red-700",
 };
 
-export default async function AdminOrdersPage() {
-  const orders = await getAllOrders();
+const STATUS_TABS = [
+  "all",
+  "pending",
+  "confirmed",
+  "processing",
+  "shipped",
+  "delivered",
+  "cancelled",
+  "returned",
+];
+
+export default async function AdminOrdersPage({ searchParams }) {
+  const { status: activeStatus = "all" } = await searchParams;
+  const status = STATUS_TABS.includes(activeStatus) ? activeStatus : "all";
+  const orders = await getAllOrders(status);
 
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-2xl">Orders</h1>
 
+      <nav className="flex flex-wrap gap-2 text-sm">
+        {STATUS_TABS.map((tab) => (
+          <Link
+            key={tab}
+            href={tab === "all" ? "/admin/orders" : `/admin/orders?status=${tab}`}
+            className={`px-3 py-1.5 rounded-sm border transition-colors ${
+              status === tab
+                ? "border-ink bg-ink text-paper"
+                : "border-line text-muted hover:border-ink hover:text-ink"
+            }`}
+          >
+            {tab === "all" ? "All" : tab}
+          </Link>
+        ))}
+      </nav>
+
       {orders.length === 0 ? (
-        <p className="text-sm text-muted">No orders yet.</p>
+        <p className="text-sm text-muted">
+          {status === "all" ? "No orders yet." : `No ${status} orders.`}
+        </p>
       ) : (
         <div className="border border-line rounded-md overflow-hidden">
           <table className="w-full text-sm">

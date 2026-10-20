@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getCategories, getProductByIdAdmin } from "@/lib/products";
+import { getCategoriesAdmin, getProductByIdAdmin } from "@/lib/products";
 import { updateProduct } from "@/lib/actions/products";
 import ProductForm from "../../ProductForm";
 
@@ -7,9 +7,11 @@ export const dynamic = "force-dynamic";
 
 export default async function EditProductPage({ params }) {
   const { id } = await params;
+  // Admin-only listing -- includes hidden collections too, so a product
+  // already assigned to one doesn't lose that option when editing.
   const [product, categories] = await Promise.all([
     getProductByIdAdmin(id),
-    getCategories(),
+    getCategoriesAdmin(),
   ]);
 
   if (!product) notFound();

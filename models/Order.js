@@ -28,9 +28,24 @@ const OrderSchema = new mongoose.Schema(
       enum: ["cod", "bank_transfer"],
       default: "cod",
     },
+    // Expanded from the original 5 statuses per Jamil's request for more
+    // granularity -- "processing" (being prepared/packed, between an
+    // admin confirming it and it actually shipping) and "returned"
+    // (a COD/bank-transfer order that came back after delivery). This is
+    // a reasonable default fulfillment lifecycle for a small COD-based
+    // local brand; easy to trim or extend further in lib/actions/orders.js
+    // and components/StatusSelect.js if Jamil's real process differs.
     status: {
       type: String,
-      enum: ["pending", "confirmed", "shipped", "delivered", "cancelled"],
+      enum: [
+        "pending",
+        "confirmed",
+        "processing",
+        "shipped",
+        "delivered",
+        "cancelled",
+        "returned",
+      ],
       default: "pending",
     },
     notes: { type: String, default: "" },

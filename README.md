@@ -25,6 +25,9 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
    - `BLOB_READ_WRITE_TOKEN` -- from a Vercel Blob store (dashboard -> your
      project -> Storage -> Create -> Blob). Only needed for the admin
      "Upload photos" field; everything else works without it.
+   - `RESEND_API_KEY` -- from https://resend.com/api-keys. Only needed for
+     customer order-status emails; everything else works without it (an
+     order without a customer email just skips the email either way).
 
    `.env.local` is already git-ignored -- it will never be committed.
 
@@ -201,6 +204,66 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
   newest (default), price low-to-high, price high-to-low, highest rated
   -- and they compose (`/products?category=<slug>&sort=<key>`). See the
   `SORTS` map in `lib/products.js` if you need to add another sort key.
+- **AI search**: `/products` has a natural-language search box
+  (`components/AISearchBar.js`) -- "something woody for winter evenings"
+  rather than keywords. `lib/actions/search.js` hands the whole live
+  catalog to Gemini (same grounded, stuff-the-catalog-in-the-prompt
+  approach as the chatbot) and only ever trusts back a product slug that
+  actually exists in it. A successful search navigates to
+  `/products?search=...&matched=slug-a,slug-b` so the ranked result is a
+  shareable URL and Gemini isn't re-called on every re-render or back
+  button -- see `getProductsBySlugs` in `lib/products.js`. An active
+  search takes over the whole page (category tabs/sort hide); "Clear
+  search" goes back to normal browsing. If Gemini errors, the search box
+  shows a plain error and nudges back to browsing by collection.
+- **AI recommendations**: every product page has a "You might also
+  like" section (`lib/recommendations.js`). There's no customer-account
+  system or real purchase history, so this is Gemini reasoning over
+  scent notes/mood/collection against the live catalog -- if that call
+  fails or returns nothing usable, it falls back to a plain
+  same-collection pick rather than erroring the page over a "nice to
+  have" section.
+- **Review sorting**: a product's review list has its own small sort
+  control (newest / highest / lowest rated), reusing the same
+  `components/SortSelect.js` as the shop's sort -- it's now a generic
+  "update this query param" control, not hardcoded to one param name.
+- **Collections -- edit/hide**: `/admin/categories` now supports editing
+  a collection's name/description in place and hiding/unhiding it
+  (`active` field on `Category`, same soft-delete convention as
+  `Product.active` -- a hidden collection drops off the public tabs/
+  homepage grid, but any product still assigned to it keeps working).
+  The slug is fixed once created (not editable) so existing
+  `/products?category=<slug>` links never break. Admin pages (the
+  product form's collection dropdown) use the new `getCategoriesAdmin()`
+  and see hidden collections too; public pages use `getCategories()`,
+  which only returns active ones.
+- **Order statuses**: expanded from 5 to 7 --
+  `pending/confirmed/processing/shipped/delivered/cancelled/returned` --
+  a reasonable default fulfillment lifecycle for a small COD/bank-
+  transfer brand. Keep `models/Order.js`'s enum,
+  `lib/actions/orders.js`'s `VALID_STATUSES`, and `StatusSelect.js`'s
+  `STATUSES` in sync if this list changes. `/admin/orders` now has
+  status tabs to filter the list.
+- **Admin dashboard**: now shows a "Recent orders" list (not just
+  counts) and a "Reviews awaiting approval" tile linking to
+  `/admin/reviews`, alongside the existing stats and low-stock list.
+- **Order-status emails**: `lib/email.js`, via Resend. When an admin
+  changes an order's status (`updateOrderStatus` in
+  `lib/actions/orders.js`), it sends a short email to that order's
+  customer -- but only if the order actually has one (`customer.email`
+  is the optional field on the checkout form, now labeled "we'll send
+  order updates here" so shoppers know why it's there). No
+  `RESEND_API_KEY`, or no email on the order, both just skip the email
+  (a `console.warn`/early return, nothing thrown) -- sending it is
+  always best-effort and can never block the actual status update,
+  which has already happened by the time the email is attempted.
+  Defaults to Resend's shared `onboarding@resend.dev` test address,
+  which works without verifying a domain but looks like a test address
+  in the inbox -- set `RESEND_FROM_EMAIL` once a real domain is verified
+  in the Resend dashboard. There's no customer-account system, so this
+  is the only notification channel for now; see the comment on
+  `STATUS_COPY` in `lib/email.js` if the per-status wording needs to
+  change.
 - **Image aspect ratio**: product cards and the product detail page use
   `aspect-[2/3]` -- matches the real product photos' actual ratio. The
   original `aspect-[3/4]` was visibly cropping every photo (this is what

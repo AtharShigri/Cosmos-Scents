@@ -5,6 +5,10 @@ const CategorySchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
     description: { type: String, default: "" },
+    // Soft hide, same convention as Product.active -- existing products
+    // keep their reference (and keep working everywhere) even when the
+    // collection itself is hidden from the public tabs/homepage grid.
+    active: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

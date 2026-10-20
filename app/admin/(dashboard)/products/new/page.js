@@ -1,11 +1,13 @@
-import { getCategories } from "@/lib/products";
+import { getCategoriesAdmin } from "@/lib/products";
 import { createProduct } from "@/lib/actions/products";
 import ProductForm from "../ProductForm";
 
 export const dynamic = "force-dynamic";
 
 export default async function NewProductPage() {
-  const categories = await getCategories();
+  // Admin-only listing -- includes hidden collections too, so one that's
+  // been hidden from the public tabs is still assignable here.
+  const categories = await getCategoriesAdmin();
 
   return (
     <div className="flex flex-col gap-6">

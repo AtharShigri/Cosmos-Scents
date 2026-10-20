@@ -140,7 +140,7 @@ export default function CheckoutPage() {
               className="w-full border border-line rounded-md px-3 py-2 text-sm focus:outline-none focus:border-ink"
             />
           </Field>
-          <Field label="Email (optional)">
+          <Field label="Email (optional -- we'll send order updates here)">
             <input
               type="email"
               value={form.email}

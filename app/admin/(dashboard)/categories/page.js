@@ -1,10 +1,11 @@
-import { getCategories } from "@/lib/products";
+import { getCategoriesAdmin } from "@/lib/products";
 import NewCategoryForm from "./NewCategoryForm";
+import CategoryRow from "./CategoryRow";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminCategoriesPage() {
-  const categories = await getCategories();
+  const categories = await getCategoriesAdmin();
 
   return (
     <div className="flex flex-col gap-10">
@@ -14,14 +15,7 @@ export default async function AdminCategoriesPage() {
         {categories.length === 0 ? (
           <p className="px-4 py-3 text-sm text-muted">No collections yet.</p>
         ) : (
-          categories.map((c) => (
-            <div key={c._id} className="px-4 py-3">
-              <p className="font-medium">{c.name}</p>
-              {c.description ? (
-                <p className="text-sm text-muted">{c.description}</p>
-              ) : null}
-            </div>
-          ))
+          categories.map((c) => <CategoryRow key={c._id} category={c} />)
         )}
       </div>
 
