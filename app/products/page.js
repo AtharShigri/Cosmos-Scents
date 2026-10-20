@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAllProducts, getCategories } from "@/lib/products";
 import ProductCard from "@/components/ProductCard";
+import SortSelect from "@/components/SortSelect";
 
 // Product data changes independently of deploys (stock, new items), and
 // this isn't a high-traffic page that needs static generation -- render
@@ -12,7 +13,7 @@ export const metadata = {
 };
 
 export default async function ProductsPage({ searchParams }) {
-  const { category: activeCategory = "all" } = await searchParams;
+  const { category: activeCategory = "all", sort = "newest" } = await searchParams;
 
   let products = [];
   let categories = [];
@@ -20,7 +21,7 @@ export default async function ProductsPage({ searchParams }) {
 
   try {
     [products, categories] = await Promise.all([
-      getAllProducts(activeCategory),
+      getAllProducts(activeCategory, sort),
       getCategories(),
     ]);
   } catch (err) {
@@ -37,22 +38,33 @@ export default async function ProductsPage({ searchParams }) {
         </p>
       </header>
 
-      {categories.length > 0 ? (
-        <nav className="flex flex-wrap gap-2 text-sm">
-          <CategoryTab href="/products" active={activeCategory === "all"}>
-            All
-          </CategoryTab>
-          {categories.map((cat) => (
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        {categories.length > 0 ? (
+          <nav className="flex flex-wrap gap-2 text-sm">
             <CategoryTab
-              key={cat.slug}
-              href={`/products?category=${cat.slug}`}
-              active={activeCategory === cat.slug}
+              href={`/products${sort !== "newest" ? `?sort=${sort}` : ""}`}
+              active={activeCategory === "all"}
             >
-              {cat.name}
+              All
             </CategoryTab>
-          ))}
-        </nav>
-      ) : null}
+            {categories.map((cat) => (
+              <CategoryTab
+                key={cat.slug}
+                href={`/products?category=${cat.slug}${
+                  sort !== "newest" ? `&sort=${sort}` : ""
+                }`}
+                active={activeCategory === cat.slug}
+              >
+                {cat.name}
+              </CategoryTab>
+            ))}
+          </nav>
+        ) : (
+          <div />
+        )}
+
+        <SortSelect value={sort} />
+      </div>
 
       {error ? (
         <p className="text-sm text-muted border border-line rounded-md p-4">

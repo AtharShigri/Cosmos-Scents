@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import BottlePlaceholder from "@/components/BottlePlaceholder";
+import StarRating from "@/components/StarRating";
 
 /**
  * Catalog/homepage product tile. Falls back to the line-art placeholder
@@ -37,6 +38,9 @@ export default function ProductCard({ product }) {
           <p className="text-sm text-muted">{product.tagline}</p>
         ) : null}
         <p className="text-sm text-muted">Rs {product.price.toLocaleString()}</p>
+        {product.ratingCount > 0 ? (
+          <StarRating value={product.ratingAvg} count={product.ratingCount} size="text-xs" />
+        ) : null}
       </div>
     </Link>
   );

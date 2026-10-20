@@ -180,6 +180,27 @@ rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
   local production) -- flagged here because it has NOT been reviewed by
   Jamil; update `app/faq/page.js`'s `FAQS` array once he's seen it,
   especially real shipping times and a real return policy.
+- **Reviews**: `models/Review.js` + `lib/reviews.js` / `lib/actions/reviews.js`.
+  Anyone can submit a review from a product's page (`components/
+  ReviewForm.js`) -- name, a 1-5 star rating, a comment -- but it always
+  lands as `status: "pending"` and is invisible everywhere until an admin
+  approves it from the moderation queue at `/admin/reviews` (tabs for
+  pending/approved/rejected; the sidebar nav shows a pending-count badge).
+  Approving/rejecting recalculates that product's cached `ratingAvg`/
+  `ratingCount` on the `Product` document (see `recalcProductRating` in
+  `lib/reviews.js`) so `/products` can sort by rating without an
+  aggregation on every page load. Approved reviews show on the product's
+  own page and a handful of the newest ones show in a "What customers are
+  saying" section on the homepage (deliberately not in the navbar, per
+  Jamil's request). No customer-account system exists, so this is
+  intentionally anonymous (no "verified purchase" check) and has no
+  rate-limiting/spam protection yet -- fine at this traffic level, worth
+  revisiting if that changes.
+- **Shop filtering/sorting**: `/products` now has a sort dropdown
+  (`components/SortSelect.js`) alongside the existing collection tabs --
+  newest (default), price low-to-high, price high-to-low, highest rated
+  -- and they compose (`/products?category=<slug>&sort=<key>`). See the
+  `SORTS` map in `lib/products.js` if you need to add another sort key.
 - **Image aspect ratio**: product cards and the product detail page use
   `aspect-[2/3]` -- matches the real product photos' actual ratio. The
   original `aspect-[3/4]` was visibly cropping every photo (this is what

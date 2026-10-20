@@ -17,6 +17,12 @@ const ProductSchema = new mongoose.Schema(
     images: { type: [String], default: [] },
     featured: { type: Boolean, default: false },
     active: { type: Boolean, default: true }, // soft hide instead of deleting
+    // Cached from approved Reviews (see models/Review.js + lib/reviews.js's
+    // recalcProductRating) so /products can sort by rating without an
+    // aggregation query on every page load. Recomputed whenever a
+    // review's status changes.
+    ratingAvg: { type: Number, default: 0 },
+    ratingCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

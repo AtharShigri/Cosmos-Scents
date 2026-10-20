@@ -3,15 +3,18 @@ import Logo from "@/components/Logo";
 import Button from "@/components/Button";
 import ProductCard from "@/components/ProductCard";
 import Carousel from "@/components/Carousel";
+import StarRating from "@/components/StarRating";
 import { getFeaturedProducts, getCategories } from "@/lib/products";
 import { getCarouselImages } from "@/lib/carousel";
+import { getApprovedReviewsForHomepage } from "@/lib/reviews";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [featured, categories] = await Promise.all([
+  const [featured, categories, reviews] = await Promise.all([
     getFeaturedProducts().catch(() => []),
     getCategories().catch(() => []),
+    getApprovedReviewsForHomepage().catch(() => []),
   ]);
   const carouselImages = getCarouselImages();
 
@@ -127,6 +130,42 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* Customer reviews -- approved ones only (lib/actions/reviews.js
+          puts every submission through an admin moderation queue first).
+          Deliberately not in the navbar; this is the one place they
+          surface on the site besides each product's own page. */}
+      {reviews.length > 0 ? (
+        <section className="mx-auto max-w-5xl px-6 py-16 w-full flex flex-col gap-8 border-t border-line">
+          <h2 className="text-2xl">What customers are saying</h2>
+          <div className="grid sm:grid-cols-3 gap-6">
+            {reviews.map((review) => (
+              <div
+                key={review._id}
+                className="border border-line rounded-md p-5 flex flex-col gap-2"
+              >
+                <StarRating value={review.rating} size="text-xs" />
+                <p className="text-sm leading-relaxed">&ldquo;{review.comment}&rdquo;</p>
+                <p className="text-sm text-muted mt-1">
+                  {review.name}
+                  {review.product ? (
+                    <>
+                      {" "}
+                      &middot;{" "}
+                      <Link
+                        href={`/products/${review.product.slug}`}
+                        className="hover:text-gold"
+                      >
+                        {review.product.name}
+                      </Link>
+                    </>
+                  ) : null}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
     </main>
   );
 }
