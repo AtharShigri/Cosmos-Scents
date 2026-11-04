@@ -26,6 +26,7 @@ const nextConfig = {
     ],
   },
   experimental: {
+    agentUpgrade: "security",
     serverActions: {
       // Default is 1MB, which the raw multipart body of a single admin
       // photo upload blows past immediately (this is what "Body exceeded

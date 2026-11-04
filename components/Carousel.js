@@ -2,41 +2,16 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import Button from "@/components/Button";
 
-const AUTOPLAY_MS = 5500;
+const AUTOPLAY_MS = 6000;
 
-/**
- * Full-screen hero slider -- this *is* the homepage hero (see app/page.js),
- * not a boxed section below it. Cinema-reel / coverflow look: the active
- * photo is a large square card popped to the front and center; the
- * previous/next photos sit behind and to each side, scaled down and
- * dimmed, with a real, clearly visible chunk of each showing (not a thin
- * sliver). Only the active slide plus its two immediate neighbors are
- * rendered -- anything further away just isn't in the DOM, so there's
- * nothing stray to peek through.
- *
- * Each card is square (`.hero-slide` in app/globals.css) to match the
- * real photos' actual ~1:1 aspect ratio -- not stretched into a tall
- * rectangle. The peek offset is a plain CSS custom property set in
- * globals.css (not a Tailwind arbitrary-property class -- that syntax
- * didn't reliably generate and produced a single full-bleed image with
- * no visible peek at all), read here via var() in an inline transform.
- *
- * Left/right arrows only fade in on hover; there's deliberately no
- * dot/indicator bar. This is also one of the few spots on the site that
- * uses real transform motion (translate + scale), not just opacity --
- * the hero is where a bit more movement reads as polish rather than the
- * "AI template" look the rest of the site deliberately avoids (see the
- * motion note in app/globals.css).
- *
- * `children` renders as the overlaid hero copy (logo/heading/CTA), on a
- * dark gradient scrim over the dark backdrop so it stays legible.
- */
-export default function Carousel({ images, children }) {
+export default function Carousel({ images }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const timerRef = useRef(null);
-  const count = images.length;
+  const count = images?.length || 0;
 
   const goTo = useCallback(
     (i) => {
@@ -56,76 +31,154 @@ export default function Carousel({ images, children }) {
 
   return (
     <section
-      className="group relative w-full h-[92vh] min-h-[560px] max-h-[820px] overflow-hidden bg-ink"
+      className="relative w-full bg-paper border-b border-line"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="relative w-full h-full">
-        {images.map((src, i) => {
-          // Shortest signed distance from the active slide, wrapping
-          // around (so slide 0's "previous" peek is the last slide).
-          let diff = i - index;
-          if (diff > count / 2) diff -= count;
-          if (diff < -count / 2) diff += count;
-
-          if (Math.abs(diff) > 1) return null;
-
-          const isActive = diff === 0;
-
-          return (
-            <div
-              key={src}
-              aria-hidden={!isActive}
-              className="hero-slide absolute top-1/2 left-1/2 rounded-sm overflow-hidden shadow-2xl shadow-black/50 transition-[transform,opacity] duration-700 ease-out"
-              style={{
-                transform: `translate(calc(-50% + (${diff} * var(--peek-offset))), -50%) scale(${isActive ? 1 : 0.82})`,
-                opacity: isActive ? 1 : 0.55,
-                zIndex: isActive ? 2 : 1,
-                pointerEvents: "none",
-              }}
-            >
-              <Image
-                src={src}
-                alt={`Cosmos Scents ${i + 1}`}
-                fill
-                priority={i === 0}
-                sizes="60vw"
-                className="object-cover"
-              />
+      <div className="mx-auto max-w-7xl px-6 lg:px-12 py-14 sm:py-20 lg:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          {/* =========================================================
+              LEFT COLUMN: Editorial Narrative (Authentic & Human)
+              ========================================================= */}
+          <div className="lg:col-span-6 flex flex-col gap-6 text-left">
+            {/* Understated Editorial Overline */}
+            <div className="flex items-center gap-3">
+              <span className="h-px w-6 bg-gold" />
+              <p className="text-[11px] sm:text-xs font-medium tracking-[0.22em] uppercase text-muted">
+                Handcrafted in Gilgit-Baltistan
+              </p>
             </div>
-          );
-        })}
+
+            {/* Title */}
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading text-ink leading-[1.15] tracking-tight">
+              Scents inspired by the wild peaks of the Karakoram.
+            </h1>
+
+            {/* Narrative Story */}
+            <p className="text-muted text-base sm:text-lg leading-relaxed max-w-lg font-sans">
+              Cosmos Scents is Gilgit-Baltistan&apos;s first local fragrance house.
+              Every batch is slowly blended and bottled by hand in Shigar Valley
+              — capturing native botanicals, high-altitude cedar, and warm amber in
+              long-lasting artisanal Extrait De Parfum.
+            </p>
+
+            {/* Call to Action */}
+            <div className="flex flex-wrap items-center gap-4 pt-3">
+              <Button
+                as={Link}
+                href="/products"
+                variant="primary"
+                className="px-7 py-3 text-sm font-medium"
+              >
+                Explore The Collection
+              </Button>
+              <Link
+                href="/about"
+                className="text-sm font-medium text-ink hover:text-gold transition-colors py-2 px-1 underline underline-offset-4 decoration-line hover:decoration-gold"
+              >
+                Our Story &amp; Heritage &rarr;
+              </Link>
+            </div>
+
+            {/* Subtle Origin Note */}
+            <div className="pt-4 text-xs text-muted/80 flex items-center gap-2">
+              <span className="text-gold">&#10022;</span>
+              <span>Distilled &amp; bottled near Serena Shigar Fort, Skardu</span>
+            </div>
+          </div>
+
+          {/* =========================================================
+              RIGHT COLUMN: Curated Gallery Exhibition Showcase
+              ========================================================= */}
+          <div className="lg:col-span-6 flex flex-col items-center">
+            {/* The Stage */}
+            <div className="relative w-full max-w-[480px] lg:max-w-[540px] aspect-square rounded-lg overflow-hidden border border-line bg-paper-raised shadow-md group">
+              {/* Slides */}
+              {images.map((src, i) => {
+                const isActive = i === index;
+                return (
+                  <div
+                    key={src}
+                    aria-hidden={!isActive}
+                    className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                      isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
+                    }`}
+                  >
+                    <Image
+                      src={src}
+                      alt={`Cosmos Scents Bottle ${i + 1}`}
+                      fill
+                      priority={i === 0}
+                      sizes="(max-width: 768px) 100vw, 540px"
+                      className="object-cover"
+                    />
+                  </div>
+                );
+              })}
+
+              {/* Minimalist Floating Prev / Next Controls */}
+              {count > 1 ? (
+                <div className="absolute inset-y-0 inset-x-3 flex items-center justify-between z-20 pointer-events-none">
+                  <button
+                    type="button"
+                    aria-label="Previous image"
+                    onClick={() => goTo(index - 1)}
+                    className="pointer-events-auto w-9 h-9 rounded-full bg-paper/90 hover:bg-paper text-ink border border-line shadow-sm flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+                  >
+                    &larr;
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Next image"
+                    onClick={() => goTo(index + 1)}
+                    className="pointer-events-auto w-9 h-9 rounded-full bg-paper/90 hover:bg-paper text-ink border border-line shadow-sm flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+                  >
+                    &rarr;
+                  </button>
+                </div>
+              ) : null}
+            </div>
+
+            {/* Human-Curated Editorial Progress Bar Below */}
+            {count > 1 ? (
+              <div className="w-full max-w-[480px] lg:max-w-[540px] flex items-center justify-between pt-4 px-1 text-xs text-muted">
+                <span className="font-mono text-muted/70">
+                  {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
+                </span>
+
+                {/* Subtle Gallery Progress Line */}
+                <div className="flex-1 mx-4 h-px bg-line relative overflow-hidden">
+                  <div
+                    className="absolute top-0 left-0 h-full bg-ink transition-all duration-500 ease-out"
+                    style={{
+                      width: `${((index + 1) / count) * 100}%`,
+                    }}
+                  />
+                </div>
+
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    aria-label="Previous slide"
+                    onClick={() => goTo(index - 1)}
+                    className="px-1.5 py-0.5 text-muted hover:text-ink transition-colors cursor-pointer"
+                  >
+                    &lsaquo;
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Next slide"
+                    onClick={() => goTo(index + 1)}
+                    className="px-1.5 py-0.5 text-muted hover:text-ink transition-colors cursor-pointer"
+                  >
+                    &rsaquo;
+                  </button>
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </div>
       </div>
-
-      {/* Dark scrim -- the one place the site leans into black, so the
-          hero copy merges with the photography instead of sitting on a
-          white band above it (see the component note above). */}
-      <div className="absolute inset-0 z-[5] bg-gradient-to-t from-ink/90 via-ink/35 to-ink/15 pointer-events-none" />
-
-      <div className="relative z-10 h-full flex flex-col items-center justify-end text-center px-6 pb-14 sm:pb-16 gap-5 text-paper">
-        {children}
-      </div>
-
-      {count > 1 ? (
-        <>
-          <button
-            type="button"
-            aria-label="Previous slide"
-            onClick={() => goTo(index - 1)}
-            className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 z-20 opacity-0 group-hover:opacity-100 text-paper/90 hover:text-gold transition-opacity text-3xl leading-none cursor-pointer"
-          >
-            &lsaquo;
-          </button>
-          <button
-            type="button"
-            aria-label="Next slide"
-            onClick={() => goTo(index + 1)}
-            className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 z-20 opacity-0 group-hover:opacity-100 text-paper/90 hover:text-gold transition-opacity text-3xl leading-none cursor-pointer"
-          >
-            &rsaquo;
-          </button>
-        </>
-      ) : null}
     </section>
   );
 }

@@ -23,7 +23,7 @@ export default function Footer() {
     <footer className="border-t border-line mt-auto">
       <div className="mx-auto max-w-5xl px-6 py-12 grid sm:grid-cols-3 gap-10">
         <div className="flex flex-col gap-3">
-          <Logo size="sm" />
+          <Logo size="md" />
           <p className="text-sm text-muted leading-relaxed max-w-xs">
             Gilgit-Baltistan&apos;s first local fragrance brand -- authentic,
             premium scents, blended and bottled in Shigar Valley.

@@ -20,27 +20,9 @@ export default async function Home() {
 
   return (
     <main className="flex flex-col">
-      {/* Hero -- the carousel itself IS the hero/wallpaper when there are
-          slides to show (drop images into public/carousel/ to add/change
-          slides, no code change needed, see lib/carousel.js). Falls back
-          to a plain text hero if that folder is empty. */}
+      {/* Hero -- large-scale artisanal fragrance carousel and brand showcase */}
       {carouselImages.length > 0 ? (
-        <Carousel images={carouselImages}>
-          <Logo size="lg" />
-          <h1 className="text-4xl sm:text-5xl md:text-6xl max-w-2xl text-paper leading-[1.05]">
-            Gilgit-Baltistan&apos;s first local fragrance brand.
-          </h1>
-          <p className="max-w-md text-paper/80">
-            Born in the heart of Shigar Valley -- authentic, premium
-            fragrances inspired by the landscapes and traditions of
-            Baltistan and beyond.
-          </p>
-          <div className="flex gap-3">
-            <Button as={Link} href="/products" variant="onDark">
-              Shop the collection
-            </Button>
-          </div>
-        </Carousel>
+        <Carousel images={carouselImages} />
       ) : (
         <section className="flex flex-col items-center justify-center px-6 py-16 sm:py-24 text-center gap-6 border-b border-line">
           <Logo size="lg" />

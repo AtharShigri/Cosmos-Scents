@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getAllProducts, getCategories, getProductsBySlugs } from "@/lib/products";
+import { getAllProducts, getCategories, getProductsBySlugs, searchProducts } from "@/lib/products";
 import ProductCard from "@/components/ProductCard";
 import SortSelect from "@/components/SortSelect";
 import AISearchBar from "@/components/AISearchBar";
@@ -40,7 +40,7 @@ export default async function ProductsPage({ searchParams }) {
   try {
     categories = await getCategories();
     products = isSearching
-      ? await getProductsBySlugs(matched ? matched.split(",").filter(Boolean) : [])
+      ? await searchProducts(search, matched ? matched.split(",").filter(Boolean) : null)
       : await getAllProducts(activeCategory, sort);
   } catch (err) {
     error = err;

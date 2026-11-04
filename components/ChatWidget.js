@@ -38,6 +38,14 @@ export default function ChatWidget() {
     }
   }, [messages, isPending, open]);
 
+  useEffect(() => {
+    function handleOpen() {
+      setOpen(true);
+    }
+    window.addEventListener("open-cosmos-chat", handleOpen);
+    return () => window.removeEventListener("open-cosmos-chat", handleOpen);
+  }, []);
+
   // Same reasoning as Header.js -- the admin area has its own sidebar and
   // its own job; a customer-facing shopping assistant doesn't belong there.
   if (pathname?.startsWith("/admin")) return null;
