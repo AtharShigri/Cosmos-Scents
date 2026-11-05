@@ -5,16 +5,34 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminAnalyticsPage() {
   const data = await getAnalyticsData();
-  const { metrics, topProducts, topCities, pipeline, categoryBreakdown, insights } = data;
+  const metrics = data?.metrics || data?.kpis || {
+    totalRevenue: 0,
+    totalOrders: 0,
+    completedOrders: 0,
+    aov: 0,
+    fulfillmentRate: 100,
+  };
+  const topProducts = data?.topProducts || [];
+  const topCities = data?.topCities || [];
+  const pipeline = data?.pipeline || {
+    pending: 0,
+    confirmed: 0,
+    processing: 0,
+    shipped: 0,
+    delivered: 0,
+    cancelled: 0,
+  };
+  const categoryBreakdown = data?.categoryBreakdown || [];
+  const insights = data?.insights || data?.recommendations || [];
 
-  const totalCatRevenue = categoryBreakdown.reduce((s, c) => s + c.revenue, 0) || 1;
+  const totalCatRevenue = categoryBreakdown.reduce((s, c) => s + (c.revenue || 0), 0) || 1;
   const pipelineTotal =
-    pipeline.pending +
-      pipeline.confirmed +
-      pipeline.processing +
-      pipeline.shipped +
-      pipeline.delivered +
-      pipeline.cancelled || 1;
+    (pipeline.pending || 0) +
+      (pipeline.confirmed || 0) +
+      (pipeline.processing || 0) +
+      (pipeline.shipped || 0) +
+      (pipeline.delivered || 0) +
+      (pipeline.cancelled || 0) || 1;
 
   return (
     <div className="flex flex-col gap-10">
@@ -25,7 +43,7 @@ export default async function AdminAnalyticsPage() {
             Total Gross Sales
           </span>
           <span className="font-heading text-2xl sm:text-3xl font-semibold text-ink">
-            Rs {metrics.totalRevenue.toLocaleString()}
+            Rs {(metrics.totalRevenue || 0).toLocaleString()}
           </span>
           <span className="text-xs text-muted mt-1">Across all confirmed customer orders</span>
         </div>
@@ -47,7 +65,7 @@ export default async function AdminAnalyticsPage() {
             Average Order Value (AOV)
           </span>
           <span className="font-heading text-2xl sm:text-3xl font-semibold text-gold">
-            Rs {metrics.aov.toLocaleString()}
+            Rs {(metrics.aov || 0).toLocaleString()}
           </span>
           <span className="text-xs text-muted mt-1">Net customer basket size</span>
         </div>
