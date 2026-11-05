@@ -4,21 +4,8 @@ import { Fragment, useActionState, useRef, useEffect } from "react";
 import Button from "@/components/Button";
 import { submitReview } from "@/lib/actions/reviews";
 
-// Classic CSS-only star-rating trick: radios 5..1 in DOM order (so a
-// later/lower-value radio is a *later* sibling), row-reverse to display
-// 1..5 left to right, and Tailwind's peer-checked/peer-hover utilities
-// (which compile to a `~` general-sibling selector) light up every star
-// at or below whichever one is checked/hovered. No React state needed
-// for this at all, which also means formRef.current?.reset() -- the
-// same pattern NewCategoryForm.js uses -- is enough to clear it after a
-// successful submit.
 const STAR_VALUES = [5, 4, 3, 2, 1];
 
-/**
- * Review submission form, shown on a product's page. Always lands in
- * the admin moderation queue as "pending" -- see lib/actions/reviews.js
- * -- so the success state here says "awaiting approval," not "posted."
- */
 export default function ReviewForm({ productId, productSlug }) {
   const [state, formAction, pending] = useActionState(submitReview, null);
   const formRef = useRef(null);
@@ -81,8 +68,7 @@ export default function ReviewForm({ productId, productSlug }) {
       {state?.error ? <p className="text-sm text-red-700">{state.error}</p> : null}
       {state?.success ? (
         <p className="text-sm text-gold">
-          Thanks! Your review has been submitted and will appear once it&apos;s
-          approved.
+          Thanks! Your review has been submitted.
         </p>
       ) : null}
 
