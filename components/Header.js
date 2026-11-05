@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Logo from "@/components/Logo";
 import { useCart } from "@/context/CartContext";
 
@@ -112,6 +112,10 @@ export default function Header() {
   const { itemCount } = useCart();
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const currentSort = searchParams?.get("sort") || "";
+  const currentSearch = searchParams?.get("search") || "";
 
   // Mobile menu state
   const [menuOpen, setMenuOpen] = useState(false);
@@ -121,8 +125,15 @@ export default function Header() {
   const [isFading, setIsFading] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Search input state (universal search)
-  const [searchQuery, setSearchQuery] = useState("");
+  // Search input state (universal AI search)
+  const [searchQuery, setSearchQuery] = useState(currentSearch);
+
+  // Sync search input if URL changes
+  useEffect(() => {
+    if (currentSearch !== searchQuery) {
+      setSearchQuery(currentSearch);
+    }
+  }, [currentSearch]);
 
   // Auto-rotate announcement bar
   useEffect(() => {
@@ -169,6 +180,20 @@ export default function Header() {
     if (typeof window !== "undefined") {
       window.dispatchEvent(new CustomEvent("open-cosmos-chat"));
     }
+  }
+
+  function isLinkActive(linkHref) {
+    if (linkHref === "/") {
+      return pathname === "/";
+    }
+    if (linkHref === "/products?sort=rating_desc") {
+      return pathname === "/products" && currentSort === "rating_desc";
+    }
+    if (linkHref === "/products") {
+      return pathname === "/products" && currentSort !== "rating_desc";
+    }
+    const cleanHref = linkHref.split("?")[0];
+    return pathname === cleanHref || pathname?.startsWith(cleanHref + "/");
   }
 
   return (
@@ -256,7 +281,7 @@ export default function Header() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search scents, notes, oud..."
+                placeholder="Search with AI (e.g. 'sia serfo', 'woody')..."
                 className="w-full pl-9 pr-8 py-2 text-xs bg-paper-raised border border-line rounded-full placeholder:text-muted/70 text-ink focus:outline-none focus:border-ink/70 focus:ring-1 focus:ring-gold/30 transition-all"
               />
               <button
@@ -336,11 +361,7 @@ export default function Header() {
         <div className="mx-auto max-w-7xl px-6">
           <ul className="flex items-center justify-center gap-8 lg:gap-12 py-3 text-[12px] lg:text-[13px] tracking-[0.14em] uppercase font-medium">
             {NAV_LINKS.map((link) => {
-              const isActive =
-                link.href === "/"
-                  ? pathname === "/"
-                  : pathname?.startsWith(link.href.split("?")[0]) &&
-                    (link.href.includes("?") ? pathname === link.href : true);
+              const isActive = isLinkActive(link.href);
 
               return (
                 <li key={link.href}>
@@ -390,7 +411,7 @@ export default function Header() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search fragrances, oud, notes..."
+              placeholder="Search with AI (e.g. 'sia serfo', 'woody')..."
               className="w-full pl-9 pr-8 py-2.5 text-sm bg-paper-raised border border-line rounded-md placeholder:text-muted/70 text-ink focus:outline-none focus:border-ink"
             />
             <button
@@ -404,17 +425,25 @@ export default function Header() {
 
           {/* Mobile Navigation Links */}
           <nav className="flex flex-col gap-3.5 text-sm font-medium">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className="py-1 text-ink hover:text-gold transition-colors flex items-center justify-between border-b border-line/40 pb-2.5"
-              >
-                <span>{link.label}</span>
-                <span className="text-muted text-xs">&rarr;</span>
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const isActive = isLinkActive(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`py-1 transition-colors flex items-center justify-between border-b border-line/40 pb-2.5 ${
+                    isActive ? "text-ink font-semibold" : "text-muted hover:text-ink"
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    {isActive ? <span className="text-gold text-xs">&#10022;</span> : null}
+                    <span>{link.label}</span>
+                  </span>
+                  <span className="text-muted text-xs">&rarr;</span>
+                </Link>
+              );
+            })}
 
             {/* Ask Cosmos AI in Mobile Menu */}
             <button

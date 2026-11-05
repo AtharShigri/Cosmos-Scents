@@ -2,7 +2,6 @@ import Link from "next/link";
 import { getAllProducts, getCategories, getProductsBySlugs, searchProducts } from "@/lib/products";
 import ProductCard from "@/components/ProductCard";
 import SortSelect from "@/components/SortSelect";
-import AISearchBar from "@/components/AISearchBar";
 
 // Product data changes independently of deploys (stock, new items), and
 // this isn't a high-traffic page that needs static generation -- render
@@ -56,15 +55,14 @@ export default async function ProductsPage({ searchParams }) {
         </p>
       </header>
 
-      <AISearchBar defaultQuery={search} />
-
       {isSearching ? (
-        <div className="flex items-center justify-between gap-4 text-sm">
+        <div className="flex items-center justify-between gap-4 p-4 rounded-md border border-line bg-paper-raised text-sm">
           <p>
-            Search results for <span className="font-medium">&ldquo;{search}&rdquo;</span>
+            AI Search results for <span className="font-semibold text-ink">&ldquo;{search}&rdquo;</span>
+            <span className="text-muted text-xs ml-2">({products.length} {products.length === 1 ? "scent" : "scents"} found)</span>
           </p>
-          <Link href="/products" className="text-muted hover:text-gold">
-            Clear search
+          <Link href="/products" className="text-sm font-medium text-muted hover:text-gold transition-colors underline underline-offset-2">
+            Clear search &rarr;
           </Link>
         </div>
       ) : (

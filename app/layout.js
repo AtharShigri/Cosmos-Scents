@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
@@ -39,7 +40,9 @@ export default function RootLayout({ children }) {
       <body className="min-h-full flex flex-col bg-paper text-ink">
         <ToastProvider>
           <CartProvider>
-            <Header />
+            <Suspense fallback={null}>
+              <Header />
+            </Suspense>
             {children}
             <Footer />
             <ChatWidget />
