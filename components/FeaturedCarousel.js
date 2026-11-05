@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import BottlePlaceholder from "@/components/BottlePlaceholder";
@@ -38,33 +38,66 @@ function ChevronRightIcon({ className = "w-4 h-4" }) {
 
 export default function FeaturedCarousel({ products = [] }) {
   const scrollRef = useRef(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
+  const isResetting = useRef(false);
 
-  function checkScroll() {
-    if (!scrollRef.current) return;
-    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-    setCanScrollLeft(scrollLeft > 10);
-    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-  }
+  // If we have at least 2 products, duplicate 3x for true infinite loop
+  const shouldLoop = products.length >= 2;
+  const displayProducts = shouldLoop
+    ? [...products, ...products, ...products]
+    : products;
+
+  // Initialize scroll position to the middle set
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || !shouldLoop) return;
+
+    // Wait for DOM layout
+    const timer = setTimeout(() => {
+      const singleSetWidth = el.scrollWidth / 3;
+      el.scrollLeft = singleSetWidth;
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [shouldLoop, products.length]);
+
+  // Seamless circular wrapping handler
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el || !shouldLoop || isResetting.current) return;
+
+    const singleSetWidth = el.scrollWidth / 3;
+
+    // Reached or passed the third set -> silently snap back to second set
+    if (el.scrollLeft >= singleSetWidth * 2 - 5) {
+      isResetting.current = true;
+      el.scrollLeft -= singleSetWidth;
+      requestAnimationFrame(() => {
+        isResetting.current = false;
+      });
+    }
+    // Reached or passed before the second set -> silently snap forward to second set
+    else if (el.scrollLeft <= 5) {
+      isResetting.current = true;
+      el.scrollLeft += singleSetWidth;
+      requestAnimationFrame(() => {
+        isResetting.current = false;
+      });
+    }
+  }, [shouldLoop]);
 
   useEffect(() => {
-    checkScroll();
     const el = scrollRef.current;
-    if (!el) return;
-    el.addEventListener("scroll", checkScroll, { passive: true });
-    window.addEventListener("resize", checkScroll);
-    return () => {
-      el.removeEventListener("scroll", checkScroll);
-      window.removeEventListener("resize", checkScroll);
-    };
-  }, [products]);
+    if (!el || !shouldLoop) return;
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, [handleScroll, shouldLoop]);
 
   function scroll(direction) {
-    if (!scrollRef.current) return;
-    const distance = 280;
-    scrollRef.current.scrollBy({
-      left: direction === "left" ? -distance : distance,
+    const el = scrollRef.current;
+    if (!el) return;
+    const scrollAmount = 260; // Approximate card width + gap
+    el.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
       behavior: "smooth",
     });
   }
@@ -73,17 +106,17 @@ export default function FeaturedCarousel({ products = [] }) {
 
   return (
     <div className="relative group w-full">
-      {/* Horizontal Slider Track */}
+      {/* Horizontal Infinite Slider Track */}
       <div
         ref={scrollRef}
         className="flex gap-5 overflow-x-auto scroll-smooth py-2 px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       >
-        {products.map((product) => {
+        {displayProducts.map((product, idx) => {
           const image = product.images?.[0];
 
           return (
             <Link
-              key={product._id}
+              key={`${product._id}-${idx}`}
               href={`/products/${product.slug}`}
               className="relative w-[210px] sm:w-[240px] aspect-[3/4] shrink-0 rounded-lg overflow-hidden border border-line bg-paper-raised shadow-sm hover:shadow-md transition-all group/card flex flex-col justify-end select-none"
             >
@@ -103,7 +136,7 @@ export default function FeaturedCarousel({ products = [] }) {
               )}
 
               {/* Distinctive Readable Bottom Overlay (Name + Rating Only) */}
-              <div className="relative z-10 w-full p-3.5 bg-gradient-to-t from-black/90 via-black/60 to-transparent flex flex-col gap-1 text-paper pt-8">
+              <div className="relative z-10 w-full p-3.5 bg-gradient-to-t from-black/95 via-black/65 to-transparent flex flex-col gap-1 text-paper pt-8">
                 <h3 className="font-heading text-sm sm:text-base font-semibold leading-tight tracking-tight text-white line-clamp-1 drop-shadow-sm group-hover/card:text-gold transition-colors">
                   {product.name}
                 </h3>
@@ -123,29 +156,25 @@ export default function FeaturedCarousel({ products = [] }) {
         })}
       </div>
 
-      {/* Left Navigation Arrow */}
-      {canScrollLeft && (
-        <button
-          type="button"
-          onClick={() => scroll("left")}
-          aria-label="Scroll featured scents left"
-          className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-paper/95 text-ink hover:bg-ink hover:text-paper border border-line shadow-md flex items-center justify-center transition-all opacity-80 sm:opacity-0 group-hover:opacity-100 cursor-pointer"
-        >
-          <ChevronLeftIcon className="w-4 h-4" />
-        </button>
-      )}
+      {/* Left Navigation Arrow -- Always active for circular navigation */}
+      <button
+        type="button"
+        onClick={() => scroll("left")}
+        aria-label="Previous featured scent"
+        className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-paper/95 text-ink hover:bg-ink hover:text-paper border border-line shadow-md flex items-center justify-center transition-all opacity-80 sm:opacity-0 group-hover:opacity-100 cursor-pointer"
+      >
+        <ChevronLeftIcon className="w-4 h-4" />
+      </button>
 
-      {/* Right Navigation Arrow */}
-      {canScrollRight && (
-        <button
-          type="button"
-          onClick={() => scroll("right")}
-          aria-label="Scroll featured scents right"
-          className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-paper/95 text-ink hover:bg-ink hover:text-paper border border-line shadow-md flex items-center justify-center transition-all opacity-80 sm:opacity-0 group-hover:opacity-100 cursor-pointer"
-        >
-          <ChevronRightIcon className="w-4 h-4" />
-        </button>
-      )}
+      {/* Right Navigation Arrow -- Always active for circular navigation */}
+      <button
+        type="button"
+        onClick={() => scroll("right")}
+        aria-label="Next featured scent"
+        className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-paper/95 text-ink hover:bg-ink hover:text-paper border border-line shadow-md flex items-center justify-center transition-all opacity-80 sm:opacity-0 group-hover:opacity-100 cursor-pointer"
+      >
+        <ChevronRightIcon className="w-4 h-4" />
+      </button>
     </div>
   );
 }
