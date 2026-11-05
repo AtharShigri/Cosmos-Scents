@@ -1,7 +1,6 @@
 "use client";
 
 import { useActionState, useRef, useEffect } from "react";
-import Button from "@/components/Button";
 import { createCategory } from "@/lib/actions/categories";
 
 export default function NewCategoryForm() {
@@ -14,29 +13,52 @@ export default function NewCategoryForm() {
 
   return (
     <form ref={formRef} action={formAction} className="flex flex-col gap-4">
-      <label className="flex flex-col gap-1.5 text-sm">
-        <span className="font-medium">Name</span>
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-semibold text-muted uppercase tracking-wider">
+          Collection Title <span className="text-rose-600">*</span>
+        </label>
         <input
           name="name"
           required
-          placeholder="e.g. Essence de Nagar"
-          className="w-full border border-line rounded-md px-3 py-2 text-sm focus:outline-none focus:border-ink"
+          placeholder="e.g. Karakoram Woods, Celestial Oud"
+          className="w-full border border-line bg-paper-raised rounded-md px-3.5 py-2 text-sm focus:outline-none focus:border-ink font-medium"
         />
-      </label>
-      <label className="flex flex-col gap-1.5 text-sm">
-        <span className="font-medium">Description (optional)</span>
-        <input
+        <span className="text-[11px] text-muted">
+          Artisanal tier or olfactive family name for fragrance grouping.
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label className="text-xs font-semibold text-muted uppercase tracking-wider">
+          Editorial Description
+        </label>
+        <textarea
           name="description"
-          className="w-full border border-line rounded-md px-3 py-2 text-sm focus:outline-none focus:border-ink"
+          rows={3}
+          placeholder="Notes on alpine botanical terroir, cold-distilled conifers, or amber accords..."
+          className="w-full border border-line bg-paper-raised rounded-md px-3.5 py-2 text-sm focus:outline-none focus:border-ink leading-relaxed"
         />
-      </label>
+      </div>
 
-      {state?.error ? <p className="text-sm text-red-700">{state.error}</p> : null}
-      {state?.success ? <p className="text-sm text-gold">Added.</p> : null}
+      {state?.error ? (
+        <div className="p-3 rounded bg-rose-50 border border-rose-200 text-xs text-rose-800">
+          {state.error}
+        </div>
+      ) : null}
 
-      <Button type="submit" variant="secondary" disabled={pending} className="w-fit">
-        {pending ? "Adding..." : "Add collection"}
-      </Button>
+      {state?.success ? (
+        <div className="p-3 rounded bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
+          <span>✓</span> Collection created successfully and available in formulation catalog.
+        </div>
+      ) : null}
+
+      <button
+        type="submit"
+        disabled={pending}
+        className="w-full sm:w-fit px-5 py-2.5 rounded-md bg-ink text-paper hover:bg-ink/85 text-xs font-semibold uppercase tracking-wider cursor-pointer shadow-xs transition-colors disabled:opacity-50"
+      >
+        {pending ? "Creating Collection..." : "Create Collection"}
+      </button>
     </form>
   );
 }
