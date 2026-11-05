@@ -84,7 +84,7 @@ export default async function AdminProductsPage() {
           </thead>
           <tbody className="divide-y divide-line">
             {products.map((p) => {
-              const mainImg = p.images?.[0] || "/images/placeholder_bottle.jpeg";
+              const mainImg = p.images?.[0] || "/brand/logo_cropped.jpeg";
 
               return (
                 <tr key={p._id} className="hover:bg-paper/60 transition-colors">

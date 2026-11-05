@@ -21,7 +21,6 @@ const NAV_SECTIONS = [
       {
         href: "/admin/analytics",
         label: "Analytics & KPIs",
-        badge: "Real-time",
         icon: (
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -45,7 +44,6 @@ const NAV_SECTIONS = [
       {
         href: "/admin/inventory",
         label: "Inventory Automation",
-        badge: "Automated",
         icon: (
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -108,7 +106,7 @@ export default function AdminSidebar({ pendingReviews = 0 }) {
           <Link href="/admin" className="flex items-center gap-3 group">
             <div className="relative w-10 h-10 rounded-full overflow-hidden border border-gold/40 shadow-xs shrink-0 bg-ink">
               <Image
-                src="/images/logo_cropped.jpeg"
+                src="/brand/logo_cropped.jpeg"
                 alt="Cosmos Scents"
                 fill
                 sizes="40px"
@@ -126,10 +124,6 @@ export default function AdminSidebar({ pendingReviews = 0 }) {
             </div>
           </Link>
 
-          <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            Live
-          </span>
         </div>
 
         {/* Grouped Navigation */}
