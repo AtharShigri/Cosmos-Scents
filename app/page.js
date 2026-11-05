@@ -3,16 +3,18 @@ import Logo from "@/components/Logo";
 import Button from "@/components/Button";
 import ProductCard from "@/components/ProductCard";
 import Carousel from "@/components/Carousel";
+import FeaturedCarousel from "@/components/FeaturedCarousel";
 import StarRating from "@/components/StarRating";
-import { getFeaturedProducts, getCategories } from "@/lib/products";
+import { getFeaturedProducts, getAllProducts, getCategories } from "@/lib/products";
 import { getCarouselImages } from "@/lib/carousel";
 import { getApprovedReviewsForHomepage } from "@/lib/reviews";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [featured, categories, reviews] = await Promise.all([
+  const [featured, allProducts, categories, reviews] = await Promise.all([
     getFeaturedProducts().catch(() => []),
+    getAllProducts().catch(() => []),
     getCategories().catch(() => []),
     getApprovedReviewsForHomepage().catch(() => []),
   ]);
@@ -42,17 +44,49 @@ export default async function Home() {
         </section>
       )}
 
-      {/* Featured products */}
+      {/* Featured Scents -- Single Horizontal Row in a Carousel with Hover Arrows */}
       {featured.length > 0 ? (
-        <section className="mx-auto max-w-5xl px-6 py-16 w-full flex flex-col gap-8">
-          <div className="flex items-baseline justify-between">
-            <h2 className="text-2xl">Featured scents</h2>
-            <Link href="/products" className="text-sm text-muted hover:text-gold">
+        <section className="mx-auto max-w-7xl px-6 lg:px-8 py-16 w-full flex flex-col gap-6">
+          <div className="flex items-baseline justify-between border-b border-line pb-4">
+            <div className="flex flex-col gap-1">
+              <h2 className="text-2xl sm:text-3xl font-heading text-ink">
+                Featured Scents
+              </h2>
+              <p className="text-sm text-muted">
+                Handpicked highlights from our artisanal collection.
+              </p>
+            </div>
+            <Link
+              href="/products"
+              className="text-sm font-medium text-muted hover:text-gold transition-colors"
+            >
               View all &rarr;
             </Link>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8">
-            {featured.map((product) => (
+
+          <FeaturedCarousel products={featured} />
+        </section>
+      ) : null}
+
+      {/* All Fragrances -- Same as All Fragrances Page (Only Image Cards) */}
+      {allProducts.length > 0 ? (
+        <section className="mx-auto max-w-7xl px-6 lg:px-8 py-16 w-full flex flex-col gap-8 border-t border-line">
+          <div className="flex items-baseline justify-between">
+            <div className="flex flex-col gap-1">
+              <h2 className="text-2xl sm:text-3xl font-heading text-ink">
+                All Fragrances
+              </h2>
+              <p className="text-sm text-muted">
+                Gilgit-Baltistan&apos;s complete signature fragrance lineup.
+              </p>
+            </div>
+            <span className="text-xs font-mono text-muted">
+              {allProducts.length} Fragrances
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8">
+            {allProducts.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
           </div>
@@ -61,14 +95,16 @@ export default async function Home() {
 
       {/* Collections */}
       {categories.length > 0 ? (
-        <section className="mx-auto max-w-5xl px-6 py-16 w-full flex flex-col gap-8 border-t border-line">
-          <h2 className="text-2xl">Shop by collection</h2>
+        <section className="mx-auto max-w-7xl px-6 lg:px-8 py-16 w-full flex flex-col gap-8 border-t border-line">
+          <h2 className="text-2xl sm:text-3xl font-heading text-ink">
+            Shop by Collection
+          </h2>
           <div className="grid sm:grid-cols-2 gap-6">
             {categories.map((cat) => (
               <Link
                 key={cat.slug}
                 href={`/products?category=${cat.slug}`}
-                className="group border border-line rounded-md p-6 flex flex-col gap-1 hover:border-ink transition-colors"
+                className="group border border-line rounded-lg p-6 flex flex-col gap-1 hover:border-ink bg-paper-raised transition-colors shadow-2xs"
               >
                 <p className="text-lg font-heading group-hover:text-gold transition-colors">
                   {cat.name}
@@ -82,49 +118,17 @@ export default async function Home() {
         </section>
       ) : null}
 
-      {/* Brand story */}
-      <section className="mx-auto max-w-3xl px-6 py-16 flex flex-col gap-6 border-t border-line text-center">
-        <h2 className="text-2xl">Our story</h2>
-        <p className="text-muted leading-relaxed">
-          Cosmos Scents is the first local fragrance brand from
-          Gilgit-Baltistan. Born in the heart of Shigar Valley, we craft
-          authentic, premium fragrances inspired by the majestic
-          landscapes, vibrant traditions, and timeless elegance of
-          Baltistan and beyond.
-        </p>
-        <div className="grid sm:grid-cols-2 gap-6 text-left">
-          <div className="flex flex-col gap-1">
-            <p className="font-medium">Our mission</p>
-            <p className="text-sm text-muted leading-relaxed">
-              To celebrate the unique essence of Gilgit-Baltistan through
-              exquisite fragrances, and to bring the heritage of our
-              valleys to the world through premium, handcrafted products.
-            </p>
-          </div>
-          <div className="flex flex-col gap-1">
-            <p className="font-medium">What we offer</p>
-            <p className="text-sm text-muted leading-relaxed">
-              Signature collections -- Essence de Skardu and Essence de
-              Hunza -- designed to evoke the spirit and charm of our land,
-              offering a sensory connection to the region&apos;s beauty
-              and craftsmanship.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Customer reviews -- approved ones only (lib/actions/reviews.js
-          puts every submission through an admin moderation queue first).
-          Deliberately not in the navbar; this is the one place they
-          surface on the site besides each product's own page. */}
+      {/* Customer reviews */}
       {reviews.length > 0 ? (
-        <section className="mx-auto max-w-5xl px-6 py-16 w-full flex flex-col gap-8 border-t border-line">
-          <h2 className="text-2xl">What customers are saying</h2>
+        <section className="mx-auto max-w-7xl px-6 lg:px-8 py-16 w-full flex flex-col gap-8 border-t border-line">
+          <h2 className="text-2xl sm:text-3xl font-heading text-ink">
+            What customers are saying
+          </h2>
           <div className="grid sm:grid-cols-3 gap-6">
             {reviews.map((review) => (
               <div
                 key={review._id}
-                className="border border-line rounded-md p-5 flex flex-col gap-2"
+                className="border border-line rounded-lg p-5 flex flex-col gap-2 bg-paper-raised shadow-2xs"
               >
                 <StarRating value={review.rating} size="text-xs" />
                 <p className="text-sm leading-relaxed">&ldquo;{review.comment}&rdquo;</p>
@@ -136,7 +140,7 @@ export default async function Home() {
                       &middot;{" "}
                       <Link
                         href={`/products/${review.product.slug}`}
-                        className="hover:text-gold"
+                        className="hover:text-gold font-medium"
                       >
                         {review.product.name}
                       </Link>
