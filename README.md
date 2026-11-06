@@ -1,7 +1,43 @@
 # Cosmos Scents
 
-Gilgit-Baltistan's first local fragrance brand -- AI-powered storefront
-rebuild. Next.js (App Router) + Tailwind CSS v4 + MongoDB + Gemini.
+Gilgit-Baltistan's first artisanal luxury fragrance brand -- modern, full-stack Next.js storefront and management platform with integrated AI shopping assistance.
+
+🌐 **Live Deployment:** [cosmos-scents.vercel.app](https://cosmos-scents.vercel.app)
+
+---
+
+## Key Features & Recent Upgrades
+
+### 🛍️ Storefront & User Experience
+- **3-Tier Luxury Header**:
+  - **Rotating Announcement Bar**: Automatically rotates curated offers, launch codes (`COSMOS10`), and brand highlights with smooth fade transitions and hover-pause.
+  - **Universal Search & Brand Hub**: Centered official brand logo, quick-access "Ask Cosmos AI" shopping button, dynamic cart counter badge, and universal search bar with fuzzy and keyword matching.
+  - **Navigation Bar**: Full-width menu with active route indicators and persistent styling.
+- **Continuous Circular Featured Carousel**:
+  - Infinite-loop sliding showcase for featured perfumes with hover-triggered navigation arrows.
+  - Clean card overlays displaying scent names and star ratings directly on dark translucent tags, preserving natural bottle image ratios.
+- **AI-Powered "Ask Cosmos" Fragrance Assistant**:
+  - Floating advisor widget powered by Gemini (`gemini-3.8-flash`) with automatic model fallback.
+  - Grounded against the live catalog in MongoDB to prevent hallucinations and provide genuine scent recommendations.
+- **Complete Shopping Workflow**:
+  - Categorized browsing (e.g. *Essence de Skardu*, *Essence de Hunza*).
+  - Sorting by newest, price, and customer ratings.
+  - Cart and checkout workflows with Cash on Delivery (COD) and Bank Transfer support.
+  - Moderated customer review submission with dynamic rating aggregation.
+
+### 💼 High-Functionality Admin Portal (`/admin`)
+- **Executive Analytics Dashboard** (`/admin/analytics`):
+  - Real-time revenue analytics, confirmed order volumes, average order value (AOV), and top-selling collections.
+- **Automated Inventory Management** (`/admin/inventory`):
+  - Automated stock status monitoring, low-stock threshold alerts, and instant stock level adjustments.
+- **Financial & Transaction Management** (`/admin/finance`):
+  - Payment method breakdowns (COD vs Bank Transfer), transaction tracking, and revenue reconciliation.
+- **Catalog & Review Moderation**:
+  - Add/edit products with persistent form state handling (preserves edits even if server validation fails).
+  - Cloud image uploads to Vercel Blob (`COSMOS_BLOB_READ_WRITE_TOKEN`).
+  - Review moderation queue (pending, approved, rejected).
+
+---
 
 ## Getting started
 
